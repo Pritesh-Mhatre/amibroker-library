@@ -1,0 +1,29 @@
+/************************************************
+* Utility functions that work on text data.
+*
+* Author: Pritesh Mhatre
+************************************************/
+
+/**
+* Returns a string that is a substring of this string. 
+* Implementation of Java substring function in AmiBroker.
+*
+* See docs link below for more details:
+* https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#substring-int-int-
+*
+* Example: 
+* substring("smiles", 1, 5);
+* Above function will return value "mile"
+*/
+function substring(text, beginIndex, endIndex) {
+
+	length = strlen(text);
+	
+	if(beginIndex < 0 OR endIndex > length OR beginIndex > endIndex) {
+		return "";
+	}
+	
+	count = endIndex - beginIndex;
+
+	return StrMid(text, beginIndex, count);
+}
