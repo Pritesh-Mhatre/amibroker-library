@@ -5,7 +5,7 @@
 ************************************************/
 
 /**
-* Returns a string that is a substring of this string. 
+* Returns a string that is a substring of the text. 
 * Implementation of Java substring function in AmiBroker.
 *
 * See docs link below for more details:
