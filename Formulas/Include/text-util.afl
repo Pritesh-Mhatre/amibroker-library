@@ -5,27 +5,69 @@
 ************************************************/
 
 /**
-* AmiBroker substring function. Returns a string that is a substring of the text. 
+* AmiBroker substring function. Returns a string that is a substring of the string. 
 * Implementation of Java substring function in AmiBroker.
 *
-* See docs link below for more details:
-* https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#substring-int-int-
-*
-* Example: 
-* substring("smiles", 1, 5);
-* Above function will return value "mile"
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strSubstring
 */
-function substring(text, beginIndex, endIndex) {
+function strSubstring(text, beginIndex, endIndex) {
+
+	result = "";
+	length = strlen(text);
+
+	// Perform validation
+	if(beginIndex < 0 OR endIndex > length OR beginIndex > endIndex) {
+		_TRACE("Function: strSubstring, Error: Validation failure for string: " + text);
+		result = "";
+	} else {
+		// Calculate the result
+		count = endIndex - beginIndex;	
+		result = StrMid(text, beginIndex, count);
+	}
+	
+	return result;
+}
+
+/**
+* A function that returns first N characters of a string.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strFirstN
+*/
+function strFirstN(text, n) {
+
+	result = "";
+		
+	// Perform validation
+	if(n < 0) {
+		_TRACE("Function: strFirstN, Error: Validation failure for string: " + text);
+		result = "";
+	} else {
+		// Calculate the result
+		result = StrMid(text, 0, n);
+	}
+	
+	return result;
+}
+
+
+/**
+* A function that returns last N characters of a string.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strLastN
+*/
+function strLastN(text, n) {
 
 	result = "";
 	length = strlen(text);
 	
-	if(beginIndex < 0 OR endIndex > length OR beginIndex > endIndex) {
-		_TRACE("Function: substring, Error: Validation failure for text: " + text);
+	// Perform validation
+	if(n < 0 OR n > length) {
+		_TRACE("Function: strLastN, Error: Validation failure for string: " + text);
 		result = "";
 	} else {
-		count = endIndex - beginIndex;	
-		result = StrMid(text, beginIndex, count);
+		// Calculate the result
+		start = length - n;
+		result = StrMid(text, start, n);
 	}
 	
 	return result;
