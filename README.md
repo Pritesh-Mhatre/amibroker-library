@@ -14,5 +14,5 @@ Following libaries are available:
 **Usage**
 
 1. Clone or download the repository & copy the AFL files into the **Formulas\Include** directory of your AmiBroker installation. (Example: C:\Program Files\AmiBroker\Formulas\Include)
-2. Include these files at the top of your afl. **<pre>#include <algotrader-util.afl></pre>**
+2. Include these files at the top of your afl. **<pre>#include <text-util.afl></pre>**
 3. Use the functions in your code.
