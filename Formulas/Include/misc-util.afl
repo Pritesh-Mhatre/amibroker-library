@@ -1,0 +1,62 @@
+/************************************************
+* Miscellaneous utility functions
+*
+* Author: Pritesh Mhatre
+************************************************/
+
+/*
+* Functions for static variables which are unique accross symbols and charts.
+*/
+global amiStaticVarKey;
+
+/*
+* Use symbol name and chart id to keep static variable unique.
+*/
+amiStaticVarKey = Name() + NumToStr(GetChartID(), 1.0, False);
+
+/**
+* Stores numeric value in static variable by preparing a unique chart specific key.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#amiStaticVarSet
+*/
+procedure amiStaticVarSet(key, value)
+{
+	global amiStaticVarKey;
+	StaticVarSet(key + amiStaticVarKey, value);
+}
+
+/**
+* Retrieves numeric data stored in static variable using a unique chart specific key.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#atStaticVarGet
+*/
+function atStaticVarGet(key)
+{
+	global amiStaticVarKey;
+	if(IsNull(var = StaticVarGet(key + amiStaticVarKey) ) ) { 
+		var = 0;
+	}
+	return var;
+}
+
+/**
+* Stores text value in static variables by preparing a unique chart specific key.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#atStaticVarSetText
+*/
+procedure atStaticVarSetText(key, value )
+{
+	global amiStaticVarKey;
+	StaticVarSetText(key + amiStaticVarKey, value);
+}
+
+/**
+* Retrieves numeric data stored in static variable using a unique chart specific key.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#atStaticVarGetText
+*/
+function atStaticVarGetText(key )
+{
+	global amiStaticVarKey;
+	return StaticVarGetText(key + amiStaticVarKey);
+}
