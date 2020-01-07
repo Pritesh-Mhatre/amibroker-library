@@ -17,13 +17,15 @@
 */
 function substring(text, beginIndex, endIndex) {
 
+	result = "";
 	length = strlen(text);
 	
 	if(beginIndex < 0 OR endIndex > length OR beginIndex > endIndex) {
-		return "";
+		result = "";
+	} else {
+		count = endIndex - beginIndex;	
+		result = StrMid(text, beginIndex, count);
 	}
 	
-	count = endIndex - beginIndex;
-
-	return StrMid(text, beginIndex, count);
+	return result;
 }
