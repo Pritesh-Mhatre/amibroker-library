@@ -78,7 +78,7 @@ function strLastN(text, n) {
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strEquals
 */
-function strEquals(a, b) {	
+function strEquals(a, b) {
 	return (a == b);
 }
 
@@ -87,9 +87,31 @@ function strEquals(a, b) {
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strEqualsIgnoreCase
 */
-function strEqualsIgnoreCase(a, b) {	
+function strEqualsIgnoreCase(a, b) {
 	aLower = StrToLower(a);
 	bLower = StrToLower(b);
 	
 	return (aLower == bLower);
+}
+
+/**
+* A function to find whether a string starts with specified prefix.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strStartsWith
+*/
+function strStartsWith(text, prefix) {
+	beginning = strFirstN(text, strlen(prefix));
+	
+	return strEquals(beginning, prefix);
+}
+
+/**
+* A function to find whether a string ends with specified suffix.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strEndsWith
+*/
+function strEndsWith(text, suffix) {
+	ending = strLastN(text, strlen(suffix));
+	
+	return strEquals(ending, suffix);
 }
