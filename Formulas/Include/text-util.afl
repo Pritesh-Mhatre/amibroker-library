@@ -29,7 +29,7 @@ function strSubstring(text, beginIndex, endIndex) {
 }
 
 /**
-* A function that returns first N characters of a string.
+* Amibroker function that returns first N characters of a string.
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strFirstN
 */
@@ -51,7 +51,7 @@ function strFirstN(text, n) {
 
 
 /**
-* A function that returns last N characters of a string.
+* Amibroker function that returns last N characters of a string.
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strLastN
 */
@@ -74,7 +74,7 @@ function strLastN(text, n) {
 }
 
 /**
-* A function to find whether two strings are equal (case-sensitive).
+* Amibroker function to find whether two strings are equal (case-sensitive).
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strEquals
 */
@@ -83,7 +83,7 @@ function strEquals(a, b) {
 }
 
 /**
-* A function to find whether two strings are equal (case-insensitive).
+* Amibroker function to find whether two strings are equal (case-insensitive).
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strEqualsIgnoreCase
 */
@@ -95,7 +95,7 @@ function strEqualsIgnoreCase(a, b) {
 }
 
 /**
-* A function to find whether a string starts with specified prefix.
+* Amibroker function to find whether a string starts with specified prefix.
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strStartsWith
 */
@@ -106,7 +106,7 @@ function strStartsWith(text, prefix) {
 }
 
 /**
-* A function to find whether a string ends with specified suffix.
+* Amibroker function to find whether a string ends with specified suffix.
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Utility-Functions#strEndsWith
 */
