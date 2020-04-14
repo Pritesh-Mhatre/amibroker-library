@@ -1,0 +1,134 @@
+/************************************************
+* Utility functions for working with files.
+*
+* Author: Pritesh Mhatre
+************************************************/
+
+/**
+* Version check.
+*/
+Version(5.8);
+
+/**
+* Default variables.
+*/
+
+FILE_DEFAULT_WRITE_MODE = "a";
+
+FILE_DEFAULT_READ_MODE = "r";
+
+FILE_DEFAULT_WRITE_SHARED_FLAG = True;
+
+FILE_DEFAULT_WRITE_RETRY_COUNT = 50;
+
+FILE_DEFAULT_MAX_LINES_SAFETY_CHECK = 100000;
+
+/**
+* Amibroker function to write a given line along with newline character. Returns True on sucessfull write.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/File-Utility-Functions#fileWriteLineAdvanced
+*/
+function fileWriteLineAdvanced( filePath, mode, shared, retryCount, line )
+{
+
+	result = True;
+
+	for( i = 1; i <= retryCount; i++ ) {
+		fh = fopen(filePath, mode, shared);
+		if (fh) {
+			fputs( line + "\n", fh );
+			fclose( fh );
+			break;
+		} else {
+			result = False;
+			_TRACE("[Attempt: " + i + "] Failed to write line: " + line);
+		}
+	}
+	
+	return result;
+}
+
+/**
+* Amibroker function to write a given line along with newline character. Returns True on sucessfull write.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/File-Utility-Functions#fileWriteLine
+*/
+function fileWriteLine( filePath, line )
+{	
+	return fileWriteLineAdvanced( filePath, FILE_DEFAULT_WRITE_MODE, FILE_DEFAULT_WRITE_SHARED_FLAG, FILE_DEFAULT_WRITE_RETRY_COUNT, line);
+}
+
+/**
+* Amibroker function to read column value from a CSV file by given row number. 
+* Returns column value if found otherwise blank.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/File-Utility-Functions#fileReadCsvColumn
+*/
+function fileReadCsvColumn( filePath, rowIndex, columnIndex ) {
+	fh = fopen( filePath, FILE_DEFAULT_READ_MODE );
+	result = "";
+	
+	if( fh )
+	{
+		for( i = 1; ! feof( fh ) AND i < FILE_DEFAULT_MAX_LINES_SAFETY_CHECK; i++ ) 
+		{
+			// read a line of text
+			line = fgets( fh ); 
+
+			if( i < rowIndex )
+			{
+				continue;
+			}
+			
+			result = StrExtract( line, columnIndex - 1 );
+			break;
+		}
+		
+		fclose( fh );
+	}
+	else
+	{
+	   _TRACE("ERROR: file can not be found " + filePath);
+	}
+	
+	return result;
+}
+
+/**
+* Amibroker function to read column value from a CSV file by identifying row by the given rowId. 
+* Returns column value if found otherwise blank.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/File-Utility-Functions#fileReadCsvColumnByRowId
+*/
+function fileReadCsvColumnByRowId( filePath, rowId, columnIndex ) {
+	fh = fopen( filePath, FILE_DEFAULT_READ_MODE );
+	result = "";
+	
+	if( fh )
+	{
+		for( i = 0; ! feof( fh ) AND i < FILE_DEFAULT_MAX_LINES_SAFETY_CHECK; i++ ) 
+		{
+			// read a line of text
+			line = fgets( fh ); 
+
+			if( line == "" )
+			{
+				// Continue if we encounter a blank line
+				continue;
+			}
+			
+			if(rowId == StrExtract( line, 0 )) {
+				result = StrExtract( line, columnIndex - 1 );
+				break;
+			}
+		}
+		
+		fclose( fh );
+	}
+	else
+	{
+	   _TRACE("ERROR: file can not be found " + filePath);
+	}
+	
+	return result;
+}
