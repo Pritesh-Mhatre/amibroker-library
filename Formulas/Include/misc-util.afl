@@ -28,9 +28,9 @@ procedure amiStaticVarSet(key, value)
 /**
 * Retrieves numeric data stored in static variable using a unique chart specific key.
 *
-* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#atStaticVarGet
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#amiStaticVarGet
 */
-function atStaticVarGet(key)
+function amiStaticVarGet(key)
 {
 	global amiStaticVarKey;
 	if(IsNull(var = StaticVarGet(key + amiStaticVarKey) ) ) { 
@@ -42,9 +42,9 @@ function atStaticVarGet(key)
 /**
 * Stores text value in static variables by preparing a unique chart specific key.
 *
-* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#atStaticVarSetText
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#amiStaticVarSetText
 */
-procedure atStaticVarSetText(key, value )
+procedure amiStaticVarSetText(key, value )
 {
 	global amiStaticVarKey;
 	StaticVarSetText(key + amiStaticVarKey, value);
@@ -53,9 +53,9 @@ procedure atStaticVarSetText(key, value )
 /**
 * Retrieves numeric data stored in static variable using a unique chart specific key.
 *
-* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#atStaticVarGetText
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Miscellaneous-Functions#amiStaticVarGetText
 */
-function atStaticVarGetText(key )
+function amiStaticVarGetText(key )
 {
 	global amiStaticVarKey;
 	return StaticVarGetText(key + amiStaticVarKey);
