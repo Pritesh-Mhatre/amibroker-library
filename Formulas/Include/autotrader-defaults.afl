@@ -4,6 +4,9 @@
 * Author: Pritesh Mhatre
 ************************************************/
 
+
+/*********************** CONSTANTS - START ***********************/
+
 AT_BLANK = "";
 
 AT_VARIETY_REGULAR = "REGULAR";
@@ -13,6 +16,14 @@ AT_VARIETY_CO = "CO";
 AT_PRODUCT_INTRADAY = "INTRADAY";
 AT_PRODUCT_DELIVERY = "DELIVERY";
 AT_PRODUCT_NORMAL = "NORMAL";
+
+AT_ORDER_LIMIT = "LIMIT";
+AT_ORDER_MARKET = "MARKET";
+AT_ORDER_STOP_LOSS = "STOP_LOSS";
+AT_ORDER_SL_MARKET = "SL_MARKET";
+
+/*********************** CONSTANTS - END ***********************/
+
 
 function defaultProductType() {
 	return AT_PRODUCT_INTRADAY;

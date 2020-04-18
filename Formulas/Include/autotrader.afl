@@ -27,6 +27,10 @@ AT_PLACE_ORDER_CMD = "PLACE_ORDER";
 AT_CANCEL_ORDER_CMD = "CANCEL_ORDER";
 AT_MODIFY_ORDER_CMD = "MODIFY_ORDER";
 
+AT_START_TIME_CHUNK = "globalStartTimeChunk";
+AT_ORDER_SEQUENCE = "globalOrderSequence";
+AT_INIT = "globalInit";
+
 /*********************** CONSTANTS - END ***********************/
 
 
@@ -41,23 +45,24 @@ AT_DEBUG = ParamToggle("Print Additional Logs", "OFF|ON", 0);
 /*
 * Initialize static variable used for generating unique order number.
 */
-if( Nz( StaticVarGet("InitializationDone") ) == 0 )
+if( Nz( StaticVarGet(AT_INIT) ) == 0 )
 {
-	StaticVarSet("InitializationDone", 1);
+	StaticVarSet(AT_INIT, 1);
 	
 	// One time initialization	
-	StaticVarSet( "globalOrderNum", 1);
+	StaticVarSet( AT_ORDER_SEQUENCE, 1);
 	
-	startTime = NumToStr(Now(5), 1.0, False);
-	StaticVarSetText( "globalStartTime", startTime);
+	timestampChunk = (Now(5) / 1000000) % 1000000;
+	startTime = NumToStr(timestampChunk, 1.0, False);
+	StaticVarSetText( AT_START_TIME_CHUNK, startTime);
 }
 
 /*
 * Givens next global order number.
 */
 function nextGlobalOrderNumber() {
-	num = StaticVarGet( "globalOrderNum");
-	StaticVarSet( "globalOrderNum", num + 1);
+	num = StaticVarGet( AT_ORDER_SEQUENCE );
+	StaticVarSet( AT_ORDER_SEQUENCE, num + 1);
 	return num;
 }
 
@@ -65,7 +70,7 @@ function nextGlobalOrderNumber() {
 * Generates unique order id.
 */
 function generateUniqueOrderId() {
-	return StaticVarGetText("globalStartTime") + "-" + 
+	return StaticVarGetText(AT_START_TIME_CHUNK) + "-" + 
 		convertIntegerToString(nextGlobalOrderNumber());
 }
 
@@ -119,36 +124,41 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 	stoplossStr = StrFormat("%.5f", prec(IIF( stoploss < 0, 0, stoploss ), AT_PRICE_PRECISION));
 	trailingStoplossStr = StrFormat("%.5f", prec(IIF( trailingStoploss < 0, 0, trailingStoploss ), AT_PRICE_PRECISION));
 	// Handling for a comma in comments
-	commentsStr = StrReplace(comments, AT_FIELD_SEPARATOR, ";" );
+	commentsStr = StrReplace(comments, AT_COMMA, ";" );
 
-	csv = AT_PLACE_ORDER_CMD + AT_COMMA +
-		orderId + AT_COMMA +
-		variety + AT_COMMA +
-		account + AT_COMMA +
-		exchange + AT_COMMA +
-		symbol + AT_COMMA +
-		tradeType + AT_COMMA +
-		orderType + AT_COMMA +
-		productType + AT_COMMA +
-		quantity + AT_COMMA +
-		priceStr	 + AT_COMMA +
-		triggerPriceStr + AT_COMMA +
-		targetStr + AT_COMMA +
-		stoplossStr + AT_COMMA +
-		trailingStoplossStr + AT_COMMA +
-		disclosedQuantity + AT_COMMA +
-		validity + AT_COMMA +
-		amo + AT_COMMA +
-		strategyId + AT_COMMA +
+	csv = AT_PLACE_ORDER_CMD 	+ AT_COMMA +
+		orderId 									+ AT_COMMA +
+		variety 									+ AT_COMMA +
+		account 								+ AT_COMMA +
+		exchange 								+ AT_COMMA +
+		symbol 									+ AT_COMMA +
+		tradeType 								+ AT_COMMA +
+		orderType 								+ AT_COMMA +
+		productType 							+ AT_COMMA +
+		quantity 								+ AT_COMMA +
+		priceStr 								+ AT_COMMA +
+		triggerPriceStr 						+ AT_COMMA +
+		targetStr 								+ AT_COMMA +
+		stoplossStr 							+ AT_COMMA +
+		trailingStoplossStr 				+ AT_COMMA +
+		disclosedQuantity 					+ AT_COMMA +
+		validity 									+ AT_COMMA +
+		amo 										+ AT_COMMA +
+		strategyId 							+ AT_COMMA +
 		comments;
 
 	if(AT_DEBUG) {
 		_TRACE("Order csv data: " + csv);
 	}	
 	
-	fileWriteLine(COMMANDS_FILE, csv);
+	written = fileWriteLine(COMMANDS_FILE, csv);
 	
-	_TRACE("Order placed: [" + orderStr + "], order id: " + id);
+	if(written) {
+		_TRACE("Order placed: [" + orderStr + "], order id: " + orderId);
+	} else {
+		_TRACE("ERROR: Order placement failed: [" + orderStr + "]");
+		orderId = "";
+	}
 	
 	return orderId;
 }
