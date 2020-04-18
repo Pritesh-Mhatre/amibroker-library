@@ -18,3 +18,15 @@ INPUT_DIR = IPC_DIR + WIN_SEPARATOR + "input";
 
 /* Directory that contains output files from AutoTrader */
 OUTPUT_DIR = IPC_DIR + WIN_SEPARATOR + "output";
+
+/* AutoTrader commands */
+COMMANDS_FILE = INPUT_DIR + WIN_SEPARATOR + "commands.csv";
+
+/* Portfolio orders */
+PORTFOLIO_ORDERS = OUTPUT_DIR + WIN_SEPARATOR + "orders.csv";
+
+/* Portfolio positions */
+PORTFOLIO_POSITIONS = OUTPUT_DIR + WIN_SEPARATOR + "positions.csv";
+
+/* Portfolio summary */
+PORTFOLIO_SUMMARY = OUTPUT_DIR + WIN_SEPARATOR + "portfolio.csv";

@@ -1,0 +1,32 @@
+/************************************************
+* Utility functions data conversion.
+*
+* Author: Pritesh Mhatre
+************************************************/
+
+AT_TIMEZONE_IST = 19800;
+
+/**
+* Converts a number to a string without any decimal places.
+*/
+function convertIntegerToString(number) {
+	return NumToStr(number, 1.0, False);
+}
+
+/*
+* Converts a given datetime object into milliseconds since epoch.
+*/
+function convertDateTimeToMillisSinceEpoch(dt) {
+	epoch = StrToDateTime("1970-01-01 00:00:00");
+	return DateTimeDiff( dt, epoch );
+}
+
+/*
+* Converts a given milliseconds since epoch into datetime object.
+*/
+function convertMillisToDateTimeSinceEpoch(millis) {
+	epoch = StrToDateTime("1970-01-01 00:00:00");
+	amount = millis / 1000;
+	amount += AT_TIMEZONE_IST;
+	return DateTimeAdd( epoch, amount, in1Second );
+}

@@ -1,0 +1,59 @@
+/************************************************
+* Contains default value functions.
+*
+* Author: Pritesh Mhatre
+************************************************/
+
+AT_BLANK = "";
+
+AT_VARIETY_REGULAR = "REGULAR";
+AT_VARIETY_BO = "BO";
+AT_VARIETY_CO = "CO";
+
+AT_PRODUCT_INTRADAY = "INTRADAY";
+AT_PRODUCT_DELIVERY = "DELIVERY";
+AT_PRODUCT_NORMAL = "NORMAL";
+
+function defaultProductType() {
+	return AT_PRODUCT_INTRADAY;
+}
+
+function defaultAmo() {
+	return FALSE;
+}
+
+function defaultValidity() {
+	return "DAY";
+}
+
+function defaultDisclosedQuantity() {
+	return 0;
+}
+
+function defaultTriggerPrice() {
+	return 0;
+}
+
+function defaultTarget() {
+	return 0;
+}
+
+function defaultStoploss() {
+	return 0;
+}
+
+function defaultTrailingStoploss() {
+	return 0;
+}
+
+function defaultStrategyId() {
+	return -1;
+}
+
+function defaultComments() {
+	return AT_BLANK;
+}
+
+function defaultVariety() {
+	return AT_VARIETY_REGULAR;
+}
