@@ -1,0 +1,20 @@
+/************************************************
+* Contains inter process communication details.
+*
+* Author: Pritesh Mhatre
+************************************************/
+
+/* Windows separator */
+WIN_SEPARATOR = "\\";
+
+/* Linux/unix separator */
+UNIX_SEPARATOR = "/";
+
+/* Inter process communication directory */
+IPC_DIR = "C:\\Users\\<your_windows_user_name>\\autotrader";
+
+/* Directory that contains input files for AutoTrader */
+INPUT_DIR = IPC_DIR + WIN_SEPARATOR + "input";
+
+/* Directory that contains output files from AutoTrader */
+OUTPUT_DIR = IPC_DIR + WIN_SEPARATOR + "output";
