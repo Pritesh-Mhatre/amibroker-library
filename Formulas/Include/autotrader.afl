@@ -1,10 +1,10 @@
-/****************************************************************
+/******************************************************************************
 *
 * AutoTrader automated trading API functions.
 * DO NOT MODIFY THIS FILE
 * Version: 1.0
 *
-******************************************************************/
+******************************************************************************/
 
 /* Import public amibroker libraries */
 
@@ -19,13 +19,7 @@
 #include<autotrader-defaults.afl>
 
 
-/*********************** CONSTANTS - START ***********************/
-
-AT_COMMA = ",";
-
-AT_PLACE_ORDER_CMD = "PLACE_ORDER";
-AT_CANCEL_ORDER_CMD = "CANCEL_ORDER";
-AT_MODIFY_ORDER_CMD = "MODIFY_ORDER";
+/***************************** CONSTANTS - START *****************************/
 
 AT_LAST_ORDER_TIME_KEY = "AT_LAST_ORDER_TIME";
 AT_LAST_ORDER_TRADE_TYPE_KEY = "AT_LAST_ORDER_TRADE_TYPE";
@@ -34,21 +28,25 @@ AT_START_TIME_CHUNK = "globalStartTimeChunk";
 AT_ORDER_SEQUENCE = "globalOrderSequence";
 AT_INIT = "globalInit";
 
-/*********************** CONSTANTS - END ***********************/
+/****************************** CONSTANTS - END ******************************/
 
 
-/*********************** PARAMETERS - START ***********************/
+/***************************** PARAMETERS - START ****************************/
 
-
-AT_PRICE_PRECISION = StrToNum(ParamList("Price precision, used for rounding price", "4|3|2|1|0"));
+AT_PRICE_PRECISION = StrToNum(ParamList(
+	"Price precision, used for rounding price", "4|3|2|1|0"));
 
 AT_DEBUG = ParamToggle("Print Additional Logs", "OFF|ON", 0);
 
 /*
-* Used for avoiding repeat orders. Repeat orders are back to back buy or sell orders.
-* The system will not accept an order in this many seconds, if an order for same stock, tradeType was sent earlier from the same chart.
-* If you want to execute back to back order then you can set this parameter to 0.
-* If you want to avoid repeat orders generated due to duplicate or multiple signals then set this parameter to a value higher than your candle interval.
+* Used for avoiding repeat orders. Repeat orders are back to back buy or 
+* sell orders. The system will not accept an order in this many seconds, 
+* if an order for same stock, tradeType was sent earlier from the same chart.
+* If you want to execute back to back order then you can set this 
+* parameter to 0.
+* If you want to avoid repeat orders generated due to duplicate signals 
+* then set this parameter to a value higher than your candle interval.
+* 
 * Example: 
 * 1. Assume AT_AVOID_REPEAT_ORDER_DELAY value is set for 120 seconds & your chart uses 1-minute (60 seconds) candle.
 * 2. System receives a BUY order for SBIN at time 10:15:15.
@@ -58,7 +56,7 @@ AT_DEBUG = ParamToggle("Print Additional Logs", "OFF|ON", 0);
 */
 AT_AVOID_REPEAT_ORDER_DELAY = Param("Avoid repeat orders (in seconds)", 26000, 0, 26000, 5);
 
-/*********************** PARAMETERS - END ***********************/
+/***************************** PARAMETERS - END *****************************/
 
 /*
 * Initialize static variable used for generating unique order number.
@@ -123,15 +121,18 @@ function readLastOrderTradeType() {
 /*
 * Converts order to easy to read text format.
 */
-function orderString(variety, symbol, tradeType, orderType, quantity, price, triggerPrice, 
-	target, stoploss, trailingStoploss) {
-	conciseForm = symbol + "|" + tradeType + "|" + orderType + "|" + quantity + "@" + price;
+function orderString(variety, symbol, tradeType, orderType, quantity, 
+	price, triggerPrice, target, stoploss, trailingStoploss) {
+	conciseForm = symbol + "|" + tradeType + "|" + orderType + "|" + 
+		quantity + "@" + price;
 
 	if(variety == AT_VARIETY_BO) {
 		result = "Bracket Order [" + conciseForm + "|" + 
-			"t=" + target + "|" + "sl=" + stoploss + "|" + "tr. sl=" + trailingStoploss + "]";
+			"t=" + target + "|" + "sl=" + stoploss + "|" + 
+			"tr. sl=" + trailingStoploss + "]";
 	} else if (variety == AT_VARIETY_CO) {
-		result = "Cover Order [" + conciseForm + "|" + "trigger=" + triggerPrice +  "]";
+		result = "Cover Order [" + conciseForm + "|" + "trigger=" + 
+			triggerPrice +  "]";
 	} else {
 		result = "Regular Order [" + conciseForm + "]";
 	}
@@ -140,8 +141,9 @@ function orderString(variety, symbol, tradeType, orderType, quantity, price, tri
 }
 
 /*
-* Checks whether we have a duplicate signal. This is done to overcome a limitation in AmiBroker, 
-* which keeps on giving same signal for every tick until the candle is complete.
+* Checks whether we have a duplicate signal. This is done to overcome a limitation 
+* in AmiBroker, which keeps on giving same signal for every tick 
+* until the candle is complete.
 */
 function isDuplicateSignal(tradeType) {
 	duplicate = False;
@@ -152,13 +154,17 @@ function isDuplicateSignal(tradeType) {
 	if(time > 0) {
 		difference = DateTimeDiff(Now(5), time);
 		
-		if(difference < AT_AVOID_REPEAT_ORDER_DELAY AND lastTradeType == StrToUpper(tradeType)) {
+		if(difference < AT_AVOID_REPEAT_ORDER_DELAY AND 
+			lastTradeType == StrToUpper(tradeType)) {
 		
-			_TRACE("ERROR: Duplicate signal. Previous order = " + lastTradeType + ", Current order = " + tradeType);
+			_TRACE("ERROR: Duplicate signal. Previous order = " 
+				+ lastTradeType + ", Current order = " + tradeType);
 			
 			if(AT_DEBUG) {
 				_TRACE("Last order time is = " + DateTimeToStr(time));
-				_TRACE("Difference of [" + difference + "] seconds is less than avoid duplicate order duration of [" + AT_AVOID_REPEAT_ORDER_DELAY + "] seconds.");
+				_TRACE("Difference of [" + difference + 
+					"] seconds is less than avoid duplicate order duration of ["
+					+ AT_AVOID_REPEAT_ORDER_DELAY + "] seconds.");
 			}
 			
 			duplicate = TRUE;
@@ -167,6 +173,10 @@ function isDuplicateSignal(tradeType) {
 	
 	return duplicate;
 }
+
+/*****************************************************************************/
+/*********************** PLACE ORDER FUNCTIONS - START ***********************/
+/*****************************************************************************/
 
 /*
 * An advanced function to place orders.
@@ -205,15 +215,22 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		orderId = generateUniqueOrderId();
 		
 		// Save order generation time
-		publishTime = convertIntegerToString(convertDateTimeToMillisSinceEpoch(LastValue(DateTime())));
+		publishTime = convertIntegerToString(
+			convertDateTimeToMillisSinceEpoch(LastValue(DateTime())));
 		
-		// Convert data into text in order to write it to a CSV file
-		
-		priceStr = StrFormat("%.5f", prec(IIF( price < 0, 0, price ), AT_PRICE_PRECISION));
-		triggerPriceStr = StrFormat("%.5f", prec(IIF( triggerPrice < 0, 0, triggerPrice ), AT_PRICE_PRECISION));
-		targetStr = StrFormat("%.5f", prec(IIF( target < 0, 0, target ), AT_PRICE_PRECISION));
-		stoplossStr = StrFormat("%.5f", prec(IIF( stoploss < 0, 0, stoploss ), AT_PRICE_PRECISION));
-		trailingStoplossStr = StrFormat("%.5f", prec(IIF( trailingStoploss < 0, 0, trailingStoploss ), AT_PRICE_PRECISION));
+		// Convert data into text in order to write it to a CSV file		
+		priceStr = StrFormat("%.5f", prec(
+			IIF( price < 0, 0, price ), AT_PRICE_PRECISION));
+		triggerPriceStr = StrFormat("%.5f", prec(
+			IIF( triggerPrice < 0, 0, triggerPrice ), AT_PRICE_PRECISION));
+		targetStr = StrFormat("%.5f", prec(
+			IIF( target < 0, 0, target ), AT_PRICE_PRECISION));
+		stoplossStr = StrFormat("%.5f", prec(
+			IIF( stoploss < 0, 0, stoploss ), AT_PRICE_PRECISION));
+		trailingStoplossStr = StrFormat("%.5f", prec(
+			IIF( trailingStoploss < 0, 0, trailingStoploss ), 
+			AT_PRICE_PRECISION));
+			
 		// Handling for a comma in comments
 		commentsStr = StrReplace(comments, AT_COMMA, ";" );
 
@@ -258,10 +275,14 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 }
 
 /*
-* A function to place regular orders.
+* A function to place regular orders. Returns order id on successful 
+* order placement; otherwise returns blank.
+* 
+* If a parameter is not applicable, then either pass blank (for text parameter) 
+* or zero (for numeric parameter).
 */
-function placeOrder(account, exchange, symbol, tradeType, orderType, productType, 
-	quantity, price, triggerPrice, validate) {
+function placeOrder(account, exchange, symbol, tradeType, orderType, 
+	productType, quantity, price, triggerPrice, validate) {
 
 	return placeOrderAdvanced(defaultVariety(), account, exchange, symbol, 
 		tradeType, orderType, productType, 
@@ -273,7 +294,11 @@ function placeOrder(account, exchange, symbol, tradeType, orderType, productType
 }
 
 /*
-* A function to place bracket orders.
+* A function to place bracket orders.Returns order id on successful 
+* order placement; otherwise returns blank.
+* 
+* If a parameter is not applicable, then either pass blank (for text parameter) 
+* or zero (for numeric parameter).
 */
 function placeBracketOrder(account, exchange, symbol, tradeType, orderType, 
 	quantity, price, triggerPrice, target, stoploss, trailingStoploss, validate) {
@@ -288,7 +313,11 @@ function placeBracketOrder(account, exchange, symbol, tradeType, orderType,
 }
 
 /*
-* A function to place cover orders.
+* A function to place cover orders.Returns order id on successful 
+* order placement; otherwise returns blank.
+* 
+* If a parameter is not applicable, then either pass blank (for text parameter) 
+* or zero (for numeric parameter).
 */
 function placeCoverOrder(account, exchange, symbol, tradeType, orderType, 
 	quantity, price, triggerPrice, validate) {
@@ -301,3 +330,88 @@ function placeCoverOrder(account, exchange, symbol, tradeType, orderType,
 		defaultStrategyId(), defaultComments(), validate);
 
 }
+
+/*****************************************************************************/
+/************************ PLACE ORDER FUNCTIONS - END ************************/
+/*****************************************************************************/
+
+
+/*****************************************************************************/
+/*********************** MODIFY ORDER FUNCTIONS - START **********************/
+/*****************************************************************************/
+
+procedure printOrderModification(account, orderId, orderType, quantity, 
+	price, triggerPrice) {
+	
+	message = "Modification: ";
+	message += ("[Account = " + account + "]");
+	message += ("[Order Id = " + orderId + "]");
+	
+	if(orderType != "") {
+		message += ("[OrderType = " + orderType + "]");
+	}
+	
+	if(quantity > 0) {
+		message += ("[Quantity = " + quantity + "]");
+	}
+	
+	if(price > 0) {
+		message += ("[Price = " + price + "]");
+	}
+	
+	if(triggerPrice > 0) {
+		message += ("[Trigger Price = " + triggerPrice + "]");
+	}
+	
+	_TRACE(message);	
+}
+
+/**
+* Modifies the order. Returns True successful modification request;
+* otherwise returns False.
+* 
+* If a parameter is not applicable, then either pass blank (for text parameter) 
+* or zero (for numeric parameter).
+*/
+function modifyOrder(account, orderId, orderType, quantity, price, 
+	triggerPrice) {
+	priceStr = StrFormat("%.5f", prec(price, AT_PRICE_PRECISION));
+	triggerPriceStr = StrFormat("%.5f", 
+		prec(triggerPrice, AT_PRICE_PRECISION));
+	
+	csv = AT_MODIFY_ORDER_CMD		+ AT_COMMA + 
+		orderId 										+ AT_COMMA + 
+		orderType 									+ AT_COMMA +  
+		quantity 									+ AT_COMMA +  
+		priceStr 									+ AT_COMMA +  
+		triggerPriceStr;
+	
+	if(AT_DEBUG) {
+		_TRACE("Sending order modify request: " + csv);
+	}
+		
+	written = fileWriteLine(COMMANDS_FILE, csv);
+	
+	if(written) {
+		_TRACE("Order modify request sent.");
+	} else {
+		_TRACE("Order modify request failed.");
+	}
+	
+	printOrderModification(account, orderId, orderType, quantity, price, 
+		triggerPrice);
+	
+	return written;
+}
+
+function modifyOrderPrice(account, orderId, price) {
+	return modifyOrder(account, orderId, AT_BLANK, 0, price, 0);
+}
+
+function modifyOrderQuantity(account, orderId, quantity) {
+	return modifyOrder(account, orderId, AT_BLANK, quantity, 0, 0);
+}
+
+/*****************************************************************************/
+/************************ MODIFY ORDER FUNCTIONS - END ***********************/
+/*****************************************************************************/

@@ -7,7 +7,9 @@
 
 /*********************** CONSTANTS - START ***********************/
 
+AT_COMMA = ",";
 AT_BLANK = "";
+AT_NA = "NA";
 
 AT_VARIETY_REGULAR = "REGULAR";
 AT_VARIETY_BO = "BO";
@@ -21,6 +23,10 @@ AT_ORDER_LIMIT = "LIMIT";
 AT_ORDER_MARKET = "MARKET";
 AT_ORDER_STOP_LOSS = "STOP_LOSS";
 AT_ORDER_SL_MARKET = "SL_MARKET";
+
+AT_PLACE_ORDER_CMD = "PLACE_ORDER";
+AT_CANCEL_ORDER_CMD = "CANCEL_ORDER";
+AT_MODIFY_ORDER_CMD = "MODIFY_ORDER";
 
 /*********************** CONSTANTS - END ***********************/
 
