@@ -48,13 +48,17 @@ AT_DEBUG = ParamToggle("Print Additional Logs", "OFF|ON", 0);
 * then set this parameter to a value higher than your candle interval.
 * 
 * Example: 
-* 1. Assume AT_AVOID_REPEAT_ORDER_DELAY value is set for 120 seconds & your chart uses 1-minute (60 seconds) candle.
+* 1. Assume AT_AVOID_REPEAT_ORDER_DELAY value is set for 120 seconds & 
+* 		your chart uses 1-minute (60 seconds) candle.
 * 2. System receives a BUY order for SBIN at time 10:15:15.
 * 3. System will place it.
-* 4. After 15 seconds, system receives another BUY order for SBIN at time 10:15:30.
-* 5. The system will NOT place this order, as the symbol & tradeType are same and the order came with 120 seconds of previous order.
+* 4. After 15 seconds, system receives another BUY order for SBIN 
+* 		at time 10:15:30.
+* 5. The system will NOT place this order, as the symbol & tradeType 
+* 		are same and the order came with 120 seconds of previous order.
 */
-AT_AVOID_REPEAT_ORDER_DELAY = Param("Avoid repeat orders (in seconds)", 26000, 0, 26000, 5);
+AT_AVOID_REPEAT_ORDER_DELAY = Param("Avoid repeat orders (in seconds)", 
+	26000, 0, 26000, 5);
 
 /***************************** PARAMETERS - END *****************************/
 
