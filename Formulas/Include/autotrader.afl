@@ -144,7 +144,7 @@ function orderString(variety, symbol, tradeType, orderType, quantity, price, tri
 * which keeps on giving same signal for every tick until the candle is complete.
 */
 function isDuplicateSignal(tradeType) {
-	duplicate = FALSE;
+	duplicate = False;
 	
 	time = readLastOrderTime();
 	lastTradeType = readLastOrderTradeType();
@@ -195,7 +195,7 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		// Perform duplicate signal check
 		if(isDuplicateSignal(tradeType)) {
 			_TRACE("Order failed validation: " + orderStr);
-			proceed = FALSE;
+			proceed = False;
 		}
 	}
 

@@ -30,7 +30,7 @@ function defaultProductType() {
 }
 
 function defaultAmo() {
-	return FALSE;
+	return False;
 }
 
 function defaultValidity() {
