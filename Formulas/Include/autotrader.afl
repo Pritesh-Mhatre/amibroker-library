@@ -1,0 +1,20 @@
+/******************************************************************************
+*
+* AutoTrader API library.
+* DO NOT MODIFY THIS FILE
+* Version: 1.0
+*
+******************************************************************************/
+
+/* Import public amibroker libraries */
+
+#include<misc-util.afl>
+#include<text-util.afl>
+#include<file-util.afl>
+#include<conversion-util.afl>
+
+/* Import AutoTrader specific amibroker libraries */
+
+#include<autotrader-ipc.afl>
+#include<autotrader-defaults.afl>
+#include<autotrader-api.afl>

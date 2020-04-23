@@ -6,19 +6,6 @@
 *
 ******************************************************************************/
 
-/* Import public amibroker libraries */
-
-#include<misc-util.afl>
-#include<text-util.afl>
-#include<file-util.afl>
-#include<conversion-util.afl>
-
-/* Import AutoTrader specific amibroker libraries */
-
-#include<autotrader-ipc.afl>
-#include<autotrader-defaults.afl>
-
-
 /***************************** CONSTANTS - START *****************************/
 
 AT_LAST_ORDER_TIME_KEY = "AT_LAST_ORDER_TIME";
