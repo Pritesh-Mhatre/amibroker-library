@@ -222,6 +222,12 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 			IIF( trailingStoploss < 0, 0, trailingStoploss ), 
 			AT_PRICE_PRECISION));
 			
+		if(amo) {
+			amoStr = "true";
+		} else {
+			amoStr = "false";
+		}
+			
 		// Handling for a comma in comments
 		commentsStr = StrReplace(comments, AT_COMMA, ";" );
 
@@ -242,7 +248,8 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 			trailingStoplossStr 				+ AT_COMMA +
 			disclosedQuantity 					+ AT_COMMA +
 			validity 									+ AT_COMMA +
-			amo 										+ AT_COMMA +
+			amoStr									+ AT_COMMA +
+			publishTime							+ AT_COMMA +
 			strategyId 							+ AT_COMMA +
 			comments;
 
