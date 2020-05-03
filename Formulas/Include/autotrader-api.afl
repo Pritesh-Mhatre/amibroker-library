@@ -232,9 +232,9 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		commentsStr = StrReplace(comments, AT_COMMA, ";" );
 
 		csv = AT_PLACE_ORDER_CMD 	+ AT_COMMA +
+			account 								+ AT_COMMA +
 			orderId 									+ AT_COMMA +
 			variety 									+ AT_COMMA +
-			account 								+ AT_COMMA +
 			exchange 								+ AT_COMMA +
 			symbol 									+ AT_COMMA +
 			tradeType 								+ AT_COMMA +
@@ -377,7 +377,8 @@ function modifyOrder(account, orderId, orderType, quantity, price,
 	triggerPriceStr = StrFormat("%.5f", 
 		prec(triggerPrice, AT_PRICE_PRECISION));
 	
-	csv = AT_MODIFY_ORDER_CMD		+ AT_COMMA + 
+	csv = AT_MODIFY_ORDER_CMD		+ AT_COMMA +
+		account 									+ AT_COMMA + 
 		orderId 										+ AT_COMMA + 
 		orderType 									+ AT_COMMA +  
 		quantity 									+ AT_COMMA +  
@@ -412,4 +413,36 @@ function modifyOrderQuantity(account, orderId, quantity) {
 
 /*****************************************************************************/
 /************************ MODIFY ORDER FUNCTIONS - END ***********************/
+/*****************************************************************************/
+
+
+/*****************************************************************************/
+/*********************** CANCEL/EXIT ORDER FUNCTIONS - START **********************/
+/*****************************************************************************/
+
+/*
+* Sends cancel order request to AutoTrader. Pass account & order id. Returns true on success.
+*/
+function cancelOrder(account, id) {
+	if(AT_DEBUG) {
+		_TRACE("Cancelling order, order id = " + id);
+	}
+
+	csv = AT_CANCEL_ORDER_CMD 		+ AT_COMMA +
+			account 								+ AT_COMMA +
+			id;
+	
+	written = fileWriteLine(COMMANDS_FILE, csv);
+	
+	if(written) {
+		_TRACE("Order cancel request sent.");
+	} else {
+		_TRACE("Order cancel request failed.");
+	}
+	
+	return written;
+}
+
+/*****************************************************************************/
+/************************ CANCEL/EXIT ORDER FUNCTIONS - END ***********************/
 /*****************************************************************************/
