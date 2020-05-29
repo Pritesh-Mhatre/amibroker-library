@@ -615,11 +615,11 @@ function getOrderPlatformTime(pseudoAccount, orderId) {
 }
 
 /*
-* Retrieve order's AMO (after market order) flag. (TRUE/FALSE)
+* Retrieve order's AMO (after market order) flag. (true/false)
 */
-function getOrderPlatformTime(pseudoAccount, orderId) {
+function getOrderAmo(pseudoAccount, orderId) {
 	flag = readOrderColumn(pseudoAccount, orderId, 25);
-	return (flag == "TRUE");	
+	return (StrToLower(flag) == "true");	
 }
 
 /*
