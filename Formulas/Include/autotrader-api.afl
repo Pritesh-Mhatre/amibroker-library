@@ -446,3 +446,238 @@ function cancelOrder(account, id) {
 /*****************************************************************************/
 /************************ CANCEL/EXIT ORDER FUNCTIONS - END ***********************/
 /*****************************************************************************/
+
+
+/*****************************************************************************/
+/************************ ORDER DETAIL FUNCTIONS - END ***********************/
+/*****************************************************************************/
+
+/*
+* Reads orders file and returns a column value for the given order id.
+*/
+function readOrderColumn(pseudoAccount, orderId, columnIndex) {
+	filePath = getPortfolioOrdersFile(pseudoAccount);
+	return fileReadCsvColumnByRowId( filePath, orderId, 3, columnIndex );
+}
+
+/*
+* Retrieve order's trading account.
+*/
+function getOrderTradingAccount(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 2);
+}
+
+/*
+* Retrieve order's trading platform id.
+*/
+function getOrderId(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 4);
+}
+
+/*
+* Retrieve order's exchange id.
+*/
+function getOrderExchangeId(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 5);
+}
+
+/*
+* Retrieve order's variety.
+*/
+function getOrderVariety(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 6);
+}
+
+/*
+* Retrieve order's (platform independent) exchange.
+*/
+function getOrderIndependentExchange(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 7);
+}
+
+/*
+* Retrieve order's (platform independent) symbol.
+*/
+function getOrderIndependentSymbol(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 8);
+}
+
+/*
+* Retrieve order's trade type.
+*/
+function getOrderTradeType(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 9);
+}
+
+/*
+* Retrieve order's order type.
+*/
+function getOrderOrderType(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 10);
+}
+
+/*
+* Retrieve order's product type.
+*/
+function getOrderProductType(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 11);
+}
+
+/*
+* Retrieve order's quantity.
+*/
+function getOrderQuantity(pseudoAccount, orderId) {
+	return StrToNum(readOrderColumn(pseudoAccount, orderId, 12));
+}
+
+/*
+* Retrieve order's price.
+*/
+function getOrderPrice(pseudoAccount, orderId) {
+	return StrToNum(readOrderColumn(pseudoAccount, orderId, 13));
+}
+
+/*
+* Retrieve order's trigger price.
+*/
+function getOrderTriggerPrice(pseudoAccount, orderId) {
+	return StrToNum(readOrderColumn(pseudoAccount, orderId, 14));
+}
+
+/*
+* Retrieve order's filled quantity.
+*/
+function getOrderFilledQuantity(pseudoAccount, orderId) {
+	return StrToNum(readOrderColumn(pseudoAccount, orderId, 15));
+}
+
+/*
+* Retrieve order's pending quantity.
+*/
+function getOrderPendingQuantity(pseudoAccount, orderId) {
+	return StrToNum(readOrderColumn(pseudoAccount, orderId, 16));
+}
+
+/*
+* Retrieve order's (platform independent) status.
+*/
+function getOrderStatus(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 17);
+}
+
+/*
+* Retrieve order's status message or rejection reason.
+*/
+function getOrderStatusMessage(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 18);
+}
+
+/*
+* Retrieve order's validity.
+*/
+function getOrderValidity(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 19);
+}
+
+/*
+* Retrieve order's average price at which it got traded.
+*/
+function getOrderAveragePrice(pseudoAccount, orderId) {
+	return StrToNum(readOrderColumn(pseudoAccount, orderId, 20));
+}
+
+/*
+* Retrieve order's parent order id. The id of parent bracket or cover order.
+*/
+function getOrderParentOrderId(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 21);
+}
+
+/*
+* Retrieve order's disclosed quantity.
+*/
+function getOrderDisclosedQuantity(pseudoAccount, orderId) {
+	return StrToNum(readOrderColumn(pseudoAccount, orderId, 22));
+}
+
+/*
+* Retrieve order's exchange time as a string (YYYY-MM-DD HH:MM:SS.MILLIS).
+*/
+function getOrderExchangeTime(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 23);
+}
+
+/*
+* Retrieve order's platform time as a string (YYYY-MM-DD HH:MM:SS.MILLIS).
+*/
+function getOrderPlatformTime(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 24);
+}
+
+/*
+* Retrieve order's AMO (after market order) flag. (TRUE/FALSE)
+*/
+function getOrderPlatformTime(pseudoAccount, orderId) {
+	flag = readOrderColumn(pseudoAccount, orderId, 25);
+	return (flag == "TRUE");	
+}
+
+/*
+* Retrieve order's comments.
+*/
+function getOrderComments(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 26);
+}
+
+/*
+* Retrieve order's raw (platform specific) status.
+*/
+function getOrderRawStatus(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 27);
+}
+
+/*
+* Retrieve order's (platform specific) exchange.
+*/
+function getOrderExchange(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 28);
+}
+
+/*
+* Retrieve order's (platform specific) symbol.
+*/
+function getOrderSymbol(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 29);
+}
+
+/*
+* Retrieve order's date (DD-MM-YYYY).
+*/
+function getOrderDay(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 30);
+}
+
+/*
+* Retrieve order's trading platform.
+*/
+function getOrderPlatform(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 31);
+}
+
+/*
+* Retrieve order's client id (as received from trading platform).
+*/
+function getOrderClientId(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 32);
+}
+
+/*
+* Retrieve order's stock broker.
+*/
+function getOrderStockBroker(pseudoAccount, orderId) {
+	return readOrderColumn(pseudoAccount, orderId, 33);
+}
+
+/*****************************************************************************/
+/************************ ORDER DETAIL FUNCTIONS - END ***********************/
+/*****************************************************************************/
