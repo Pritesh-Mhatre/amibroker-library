@@ -23,10 +23,16 @@ OUTPUT_DIR = IPC_DIR + WIN_SEPARATOR + "output";
 COMMANDS_FILE = INPUT_DIR + WIN_SEPARATOR + "commands.csv";
 
 /* Portfolio orders */
-PORTFOLIO_ORDERS = OUTPUT_DIR + WIN_SEPARATOR + "orders.csv";
+function getPortfolioOrdersFile(pseudoAccount) {
+	return OUTPUT_DIR + WIN_SEPARATOR + pseudoAccount + "-orders.csv";
+}
 
 /* Portfolio positions */
-PORTFOLIO_POSITIONS = OUTPUT_DIR + WIN_SEPARATOR + "positions.csv";
+function getPortfolioPositionsFile(pseudoAccount) {
+	return OUTPUT_DIR + WIN_SEPARATOR + pseudoAccount + "-positions.csv";
+}
 
-/* Portfolio summary */
-PORTFOLIO_SUMMARY = OUTPUT_DIR + WIN_SEPARATOR + "portfolio.csv";
+/* Portfolio margins */
+function getPortfolioMarginsFile(pseudoAccount) {
+	return OUTPUT_DIR + WIN_SEPARATOR + pseudoAccount + "-margins.csv";
+}
