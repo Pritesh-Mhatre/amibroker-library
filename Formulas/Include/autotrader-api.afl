@@ -684,11 +684,276 @@ function getOrderStockBroker(pseudoAccount, orderId) {
 
 
 /*****************************************************************************/
+/************************ POSITION DETAIL FUNCTIONS - START ***********************/
+/*****************************************************************************/
+
+/*
+* Reads positions file and returns a column value for the given position id.
+* Position id is a combination of category, type, independentExchange & independentSymbol.
+*/
+function readPositionColumnInternal(pseudoAccount, 
+	category, categoryColumnIndex,	type, typeColumnIndex,
+	independentExchange, independentExchangeColumnIndex,
+	independentSymbol, independentSymbolColumnIndex, columnIndex) {
+	
+	filePath = getPortfolioPositionsFile(pseudoAccount);
+	
+	fh = fopen( filePath, FILE_DEFAULT_READ_MODE );
+	result = "";
+	
+	if( fh )
+	{
+		for( i = 0; ! feof( fh ) AND i < FILE_DEFAULT_MAX_LINES_SAFETY_CHECK; i++ ) 
+		{
+			// read a line of text
+			line = fgets( fh ); 
+
+			if( line == "" )
+			{
+				// Continue if we encounter a blank line
+				continue;
+			}
+			
+			if(	category == StrExtract( line, categoryColumnIndex - 1 ) AND
+				type == StrExtract( line, typeColumnIndex - 1 ) AND
+				independentExchange == StrExtract( line, independentExchangeColumnIndex - 1 ) AND
+				independentSymbol == StrExtract( line, independentSymbolColumnIndex - 1 ) ) {
+				
+				result = StrExtract( line, columnIndex - 1 );
+				break;
+			}
+		}
+		
+		fclose( fh );
+	}
+	else
+	{
+	   _TRACE("ERROR: file can not be found " + filePath);
+	}
+	
+	return result;
+}
+
+/*
+* Reads positions file and returns a column value for the given position id.
+* Position id is a combination of category, type, independentExchange & independentSymbol.
+*/
+function readPositionColumn(pseudoAccount, 
+	category, type, independentExchange,	independentSymbol, columnIndex) {
+	
+	return readPositionColumnInternal(pseudoAccount, category, 4, type, 3,
+		independentExchange, 5, independentSymbol, 6, columnIndex);
+}
+
+/*
+* Retrieve positions's trading account.
+*/
+function getPositionTradingAccount(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 2);
+}
+
+/*
+* Retrieve positions's MTM.
+*/
+function getPositionMtm(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 7));
+}
+
+/*
+* Retrieve positions's PNL.
+*/
+function getPositionPnl(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 8));
+}
+
+/*
+* Retrieve positions's buy quantity.
+*/
+function getPositionBuyQuantity(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 9));
+}
+
+/*
+* Retrieve positions's sell quantity.
+*/
+function getPositionSellQuantity(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 10));
+}
+
+/*
+* Retrieve positions's net quantity.
+*/
+function getPositionNetQuantity(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 11));
+}
+
+/*
+* Retrieve positions's buy value.
+*/
+function getPositionBuyValue(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 12));
+}
+
+/*
+* Retrieve positions's sell value.
+*/
+function getPositionSellValue(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 13));
+}
+
+/*
+* Retrieve positions's net value.
+*/
+function getPositionNetValue(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 14));
+}
+
+/*
+* Retrieve positions's buy average price.
+*/
+function getPositionBuyAvgPrice(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 15));
+}
+
+/*
+* Retrieve positions's sell average price.
+*/
+function getPositionSellAvgPrice(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 16));
+}
+
+/*
+* Retrieve positions's realised pnl.
+*/
+function getPositionRealisedPnl(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 17));
+}
+
+/*
+* Retrieve positions's unrealised pnl.
+*/
+function getPositionUnrealisedPnl(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 18));
+}
+
+/*
+* Retrieve positions's overnight quantity.
+*/
+function getPositionOvernightQuantity(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 19));
+}
+
+/*
+* Retrieve positions's multiplier.
+*/
+function getPositionMultiplier(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 20));
+}
+
+/*
+* Retrieve positions's LTP.
+*/
+function getPositionLtp(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 21));
+}
+
+/*
+* Retrieve positions's (platform specific) exchange.
+*/
+function getPositionExchange(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 22);
+}
+
+/*
+* Retrieve positions's (platform specific) symbol.
+*/
+function getPositionSymbol(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 23);
+}
+
+/*
+* Retrieve positions's date (DD-MM-YYYY).
+*/
+function getPositionDay(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 24);
+}
+
+/*
+* Retrieve positions's trading platform.
+*/
+function getPositionPlatform(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 25);
+}
+
+/*
+* Retrieve positions's account id as received from trading platform.
+*/
+function getPositionAccountId(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 26);
+}
+
+/*
+* Retrieve positions's stock broker.
+*/
+function getPositionStockBroker(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 28);
+}
+
+/*****************************************************************************/
+/************************ POSITION DETAIL FUNCTIONS - END ***********************/
+/*****************************************************************************/
+
+
+/*****************************************************************************/
 /************************ MARGIN DETAIL FUNCTIONS - START ***********************/
 /*****************************************************************************/
 
 /*
-* Reads margins file and returns a column value for the given order id.
+* Reads margins file and returns a column value for the given margin category.
 */
 function readMarginColumn(pseudoAccount, category, columnIndex) {
 	filePath = getPortfolioMarginsFile(pseudoAccount);
