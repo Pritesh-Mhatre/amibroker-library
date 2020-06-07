@@ -1,0 +1,27 @@
+/******************************************************************************
+*
+* AutoTrader utility functions library functions that uses AutoTrader API.
+* DO NOT MODIFY THIS FILE
+* Version: 1.0
+*
+******************************************************************************/
+
+/*
+* Returns True if the order is the first of the day for the current chart.
+*/
+function isFirstOrder(account) {
+	lastTradeType = readLastOrderTradeType(account);
+	return lastTradeType == "";
+}
+
+/*
+* We double the quantity if order is not first, so that we can square off earlier position
+* and enter into a new position.
+*/
+function calcDoubleQuantity(account, defaultQuantity) {
+	qty = defaultQuantity;
+	if(isFirstOrder(account)) {
+		qty = defaultQuantity * 2;
+	}
+	return qty;
+}

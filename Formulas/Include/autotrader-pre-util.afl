@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* AutoTrader utility functions library.
+* AutoTrader utility functions library functions that do not depende on AutoTrader API.
 * DO NOT MODIFY THIS FILE
 * Version: 1.0
 *
@@ -19,7 +19,7 @@ procedure saveStaticVariable(account, key, value)
 */
 function readStaticVariable(account, key)
 {
-	amiStaticVarGet(account + key);
+	return amiStaticVarGet(account + key);
 }
 
 /**
@@ -33,7 +33,7 @@ procedure saveStaticVariableText(account, key, value)
 /**
 * Reads text data from a static variable. Account is used to create a unique key.
 */
-function readStaticVariable(account, key)
+function readStaticVariableText(account, key)
 {
-	amiStaticVarGetText(account + key);
+	return amiStaticVarGetText(account + key);
 }

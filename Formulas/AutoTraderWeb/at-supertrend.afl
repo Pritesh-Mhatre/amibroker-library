@@ -10,7 +10,7 @@
 ********************************************************************/
 
 /*******************************************************************
-* SuperTrend indicator based automated trading example.
+* SuperTrend indicator based automated trading afl example.
 * 
 * NOTE: It is recommended to start with a blank chart.
 ********************************************************************/
@@ -116,14 +116,28 @@ Sell=ExRem(Sell,Buy);
 */
 if ( LastValue(Buy) == True )
 {
-	placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
-		AT_PRODUCT_TYPE, AT_QUANTITY, buyPrice, defaultTriggerPrice(), True);
+		/* 
+		* We do some calculation to double the quantity, for all orders except first.
+		* This is done so that we can re-enter a position. Following this approach
+		* we can avoid using Short & Cover.
+		*/
+		quantity = calcDoubleQuantity(AT_ACCOUNT, AT_QUANTITY);
+
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
+			AT_PRODUCT_TYPE, quantity, buyPrice, defaultTriggerPrice(), True);
 }
 
 if ( LastValue(Sell) == True )
 {	
-	placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
-		AT_PRODUCT_TYPE, AT_QUANTITY, sellPrice, defaultTriggerPrice(), True);
+		/* 
+		* We do some calculation to double the quantity, for all orders except first.
+		* This is done so that we can re-enter a position. Following this approach
+		* we can avoid using Short & Cover.
+		*/
+		quantity = calcDoubleQuantity(AT_ACCOUNT, AT_QUANTITY);
+		
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
+			AT_PRODUCT_TYPE, quantity, sellPrice, defaultTriggerPrice(), True);
 }
 
 /******************************************************************** 

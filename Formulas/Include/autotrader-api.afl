@@ -20,6 +20,18 @@ AT_INIT = "globalInit";
 
 /***************************** PARAMETERS - START ****************************/
 
+_SECTION_BEGIN("AutoTrader");
+
+AT_EXCHANGE = ParamList("Exchange", "NSE|BSE|MCX");
+
+AT_SYMBOL = ParamStr("Symbol", Name());
+
+AT_ACCOUNT = ParamStr("Account", "Pseudo Account");
+
+AT_PRODUCT_TYPE = ParamList("Product Type", "INTRADAY|DELIVERY|NORMAL");
+
+AT_QUANTITY = Param("Quantity", 1, 0, 300000, 10);
+
 AT_PRICE_PRECISION = StrToNum(ParamList(
 	"Price precision, used for rounding price", "4|3|2|1|0"));
 
@@ -46,6 +58,8 @@ AT_DEBUG = ParamToggle("Print Additional Logs", "OFF|ON", 0);
 */
 AT_AVOID_REPEAT_ORDER_DELAY = Param("Avoid repeat orders (in seconds)", 
 	26000, 0, 26000, 5);
+
+_SECTION_END();
 
 /***************************** PARAMETERS - END *****************************/
 

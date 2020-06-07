@@ -15,7 +15,8 @@
 
 /* Import AutoTrader specific amibroker libraries */
 
-#include<autotrader-util.afl>
+#include<autotrader-pre-util.afl>
 #include<autotrader-ipc.afl>
 #include<autotrader-defaults.afl>
 #include<autotrader-api.afl>
+#include<autotrader-post-util.afl>
