@@ -1,0 +1,133 @@
+/******************************************************************** 
+* SECTION 1 - BEGIN
+* This section contains all includes & should be at the top of your strategy afl.
+********************************************************************/
+
+#include <autotrader.afl>
+
+/******************************************************************** 
+* SECTION 1 - END
+********************************************************************/
+
+/*******************************************************************
+* SuperTrend indicator based automated trading example.
+* 
+* NOTE: It is recommended to start with a blank chart.
+********************************************************************/
+
+/*******************************************************************
+* How to see strategy logs in AMIBroker?
+* 1. Enable log window from amibroker menu (Window -> Log)
+* 2. You will see log window at the bottom.
+* 3. Go to "Trace" tab (all strategy logs are printed here).
+********************************************************************/
+
+
+/******************************************************************** 
+* SECTION 2 - BEGIN
+* This section contains your strategy afl code.
+********************************************************************/
+
+_SECTION_BEGIN("Supertrend");         
+
+// SuperTrend parameters
+Multiplier = Param("Period", 7, 1, 50 );
+Period = Param("Multiplier", 3, 1, 10 );
+
+// Chart parameters
+UpColor = ParamColor("Up Color", colorGreen);
+DownColor = ParamColor("Down Color", colorRed);
+WickUpColor = ParamColor("Wick UP Color", colorLime);
+WickDownColor = ParamColor("Wick Down Color", colorOrange);
+ResistanceColor = ParamColor("Resistance", colorRed);
+SupportColor = ParamColor( "Support", colorGreen);
+Style = ParamStyle("Line Style", styleThick);
+
+// Refresh even when minimized, see below link
+// https://forum.amibroker.com/t/program-pauses-when-amibroker-minimized/4145/2
+RefreshPeriod = Param( "Timed Refresh Period", 2, 1, 300);
+RequestTimedRefresh(5, False);
+   
+SetChartOptions(0, chartShowArrows|chartShowDates);        
+       
+SetBarFillColor(IIf(C>O, UpColor, IIf(C<=O, DownColor, colorLightGrey)));        
+
+Plot(C, "Price", IIf(C>O, WickUpColor, IIf(C<=O, WickDownColor, colorLightGrey)), styleCandle | styleNoTitle);
+
+_N(Title = "Supertrend: " + 
+	StrFormat("{{INTERVAL}} {{DATE}} \nOpen= %g, HiGH= %g, LoW= %g, Close= %g (%.1f%%) {{VALUES}}", 
+		O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));         
+        
+function calculateSupertrend(Period, Multiplier)
+{
+	ATR_Val=ATR(Period);
+
+	UpperBand=LowerBand=final_UpperBand=final_LowerBand=SuperTrend=0;
+	
+	for( i = Period; i < BarCount; i++ )
+	{
+		UpperBand[i]=((High[i] + Low[i])/2) + Multiplier*ATR_Val[i];
+		LowerBand[i]=((High[i] + Low[i])/2) - Multiplier*ATR_Val[i];
+		final_UpperBand[i] = IIf( ((UpperBand[i]<final_UpperBand[i-1]) OR (Close[i-1]>final_UpperBand[i-1])), (UpperBand[i]), final_UpperBand[i-1]);
+		final_LowerBand[i] = Iif( ((LowerBand[i]>final_LowerBand[i-1]) OR (Close[i-1]<final_LowerBand[i-1])), (LowerBand[i]), final_LowerBand[i-1]);
+			
+		SuperTrend[i] = IIf(((SuperTrend[i-1]==final_UpperBand[i-1]) AND (Close[i]<=final_UpperBand[i])),final_UpperBand[i],
+		IIf(((SuperTrend[i-1]==final_UpperBand[i-1]) AND (Close[i]>=final_UpperBand[i])),final_LowerBand[i],
+		IIf(((SuperTrend[i-1]==final_LowerBand[i-1]) AND (Close[i]>=final_LowerBand[i])),final_LowerBand[i],
+		IIf(((SuperTrend[i-1]==final_LowerBand[i-1]) AND (Close[i]<=final_LowerBand[i])),final_UpperBand[i],0))));
+
+	}
+	
+	Plot( SuperTrend, "SuperTrend", IIf( SuperTrend>Close, ResistanceColor, SupportColor), Style);
+	Return SuperTrend;  
+}
+
+SuperTrend = calculateSupertrend(Period,Multiplier);
+
+// This will tell us if the line is green or red (i.e. buy or sell)
+// Close > Supertrend == BUY Signal otherwise SELL
+SupertrendSignal = Close > SuperTrend;
+
+// This will tell us whenever there is a change in signal
+SignalChanged = SupertrendSignal != Ref(SupertrendSignal, -1);
+
+// If supertrend is buy and signal just changed
+Buy = SupertrendSignal AND SignalChanged;
+
+// If supertrend is sell and signal just changed
+Sell = (!SupertrendSignal) AND SignalChanged;
+
+// Additional safety, remove excessive signals
+Buy=ExRem(Buy,Sell);
+Sell=ExRem(Sell,Buy);
+
+/******************************************************************** 
+* SECTION 2 - END
+********************************************************************/
+
+/******************************************************************** 
+* SECTION 3 - BEGIN
+* This section contains your code for placing orders.
+********************************************************************/
+
+/* 
+* If control reaches here, it means we are before square off time,
+* so we can place orders.
+*/
+if ( LastValue(Buy) == True )
+{
+	placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
+		AT_PRODUCT_TYPE, AT_QUANTITY, buyPrice, defaultTriggerPrice(), True);
+}
+
+if ( LastValue(Sell) == True )
+{	
+	placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
+		AT_PRODUCT_TYPE, AT_QUANTITY, sellPrice, defaultTriggerPrice(), True);
+}
+
+/******************************************************************** 
+* SECTION 3 - END
+********************************************************************/
+
+_SECTION_END();
