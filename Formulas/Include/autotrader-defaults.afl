@@ -35,6 +35,21 @@ AT_MARGIN_ALL = "ALL";
 /*********************** CONSTANTS - END ***********************/
 
 
+/*********************** PARAMETERS - START ***********************/
+
+AT_EXCHANGE = ParamList("Exchange", "NSE|BSE|MCX");
+
+AT_SYMBOL = ParamStr("Symbol", Name());
+
+AT_ACCOUNT = ParamStr("Account", "Pseudo Account");
+
+AT_PRODUCT_TYPE = ParamList("Product Type", "INTRADAY|DELIVERY|NORMAL");
+
+AT_QUANTITY = Param("Quantity", 1, 0, 300000, 10);
+
+/*********************** PARAMETERS - START ***********************/
+
+
 function defaultProductType() {
 	return AT_PRODUCT_INTRADAY;
 }
