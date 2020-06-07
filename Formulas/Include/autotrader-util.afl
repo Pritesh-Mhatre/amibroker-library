@@ -1,0 +1,39 @@
+/******************************************************************************
+*
+* AutoTrader utility functions library.
+* DO NOT MODIFY THIS FILE
+* Version: 1.0
+*
+******************************************************************************/
+
+/**
+* Stores numeric data in a static variable. Account is used to create a unique key.
+*/
+procedure saveStaticVariable(account, key, value)
+{
+	amiStaticVarSet(account + key, value);
+}
+
+/**
+* Reads numeric data from a static variable. Account is used to create a unique key.
+*/
+function readStaticVariable(account, key)
+{
+	amiStaticVarGet(account + key);
+}
+
+/**
+* Stores text data in a static variable. Account is used to create a unique key.
+*/
+procedure saveStaticVariableText(account, key, value)
+{
+	amiStaticVarSetText(account + key, value);
+}
+
+/**
+* Reads text data from a static variable. Account is used to create a unique key.
+*/
+function readStaticVariable(account, key)
+{
+	amiStaticVarGetText(account + key);
+}
