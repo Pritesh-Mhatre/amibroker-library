@@ -20,7 +20,7 @@ function isFirstOrder(account) {
 */
 function calcDoubleQuantity(account, defaultQuantity) {
 	qty = defaultQuantity;
-	if(isFirstOrder(account)) {
+	if(isFirstOrder(account) == False) {
 		qty = defaultQuantity * 2;
 	}
 	return qty;
