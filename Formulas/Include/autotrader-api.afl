@@ -971,7 +971,7 @@ function getPositionStockBroker(pseudoAccount, category, type,
 */
 function readMarginColumn(pseudoAccount, category, columnIndex) {
 	filePath = getPortfolioMarginsFile(pseudoAccount);
-	return fileReadCsvColumnByRowId( filePath, orderId, 3, columnIndex );
+	return fileReadCsvColumnByRowId( filePath, category, 3, columnIndex );
 }
 
 /*
