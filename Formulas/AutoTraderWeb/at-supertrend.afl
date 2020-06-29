@@ -45,8 +45,8 @@ Style = ParamStyle("Line Style", styleThick);
 
 // Refresh even when minimized, see below link
 // https://forum.amibroker.com/t/program-pauses-when-amibroker-minimized/4145/2
-RefreshPeriod = Param( "Timed Refresh Period", 2, 1, 300);
-RequestTimedRefresh(5, False);
+RefreshPeriod = Param( "Timed Refresh Period", 5, 1, 300);
+RequestTimedRefresh(RefreshPeriod, False);
    
 SetChartOptions(0, chartShowArrows|chartShowDates);        
        
