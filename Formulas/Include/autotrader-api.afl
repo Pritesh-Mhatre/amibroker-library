@@ -334,7 +334,7 @@ function placeBracketOrder(account, exchange, symbol, tradeType, orderType,
 function placeCoverOrder(account, exchange, symbol, tradeType, orderType, 
 	quantity, price, triggerPrice, validate) {
 
-	return placeOrderAdvanced(AT_VARIETY_BO, account, exchange, symbol, 
+	return placeOrderAdvanced(AT_VARIETY_CO, account, exchange, symbol, 
 		tradeType, orderType, defaultProductType(), 
 		quantity, price, triggerPrice,
 		defaultTarget(), defaultStoploss(), defaultTrailingStoploss(),
