@@ -1,0 +1,47 @@
+#include <autotrader-button.afl>
+#include <autotrader.afl>
+
+global ColNumber;
+
+TARGET = Param("Target (absolute)", 1, 1, 1000, 1);
+STOPLOSS = Param("Stoploss (absolute)", 1, 1, 1000, 1);
+TRAILING_STOPLOSS = Param("Trailing Stoploss (absolute)", 0, 0, 1000, 1);
+
+BUFFER = Param("Make BO behave like a market order", 1, 1, 1000, 1);
+
+// Refresh even when minimized, see below link
+// https://forum.amibroker.com/t/program-pauses-when-amibroker-minimized/4145/2
+RequestTimedRefresh(5, False);
+
+CellHeight = Param("Cell Height",20,5,200,1); 
+CellWidth = Param("Cell Width",120,5,200,1); 
+PanelYoffset = Param("Cell Row Offset (px)",10,0,Status("pxheight"),1); 
+PanelXoffset = Param("Cell Column Offset (px)",10,0,Status("pxwidth"),1); 
+FontRatio = Param("Font: CellHeight ratio",2,1,20,0.1);
+
+Column_Begin( "1" );
+	BuyCommand = TriggerCell( "BUY", colorBrightGreen, colorAqua, colorBlack);
+Column_End( );
+
+Column_Begin( "2" );
+	SellCommand = TriggerCell( "SELL", colorRed, colorLightOrange, colorBlack);
+Column_End( );
+
+ClickCoordinates = Nz(StaticVarGet("ClickCoordinates"));
+switch( ClickCoordinates )
+{
+    case 101:
+		// You can write any of AutoTrader Web API functions here		
+		placeBracketOrder(AT_ACCOUNT, 
+			AT_EXCHANGE, AT_SYMBOL, "BUY", 
+			"LIMIT", AT_QUANTITY, LastValue(C) + BUFFER, 
+			defaultTriggerPrice(), TARGET, STOPLOSS, TRAILING_STOPLOSS, False);	
+    break;
+    case 201:
+		// You can write any of AutoTrader Web API functions here
+		placeBracketOrder(AT_ACCOUNT, 
+			AT_EXCHANGE, AT_SYMBOL, "SELL", 
+			"LIMIT", AT_QUANTITY, LastValue(C) - BUFFER, 
+			defaultTriggerPrice(), TARGET, STOPLOSS, TRAILING_STOPLOSS, False);
+    break;
+}

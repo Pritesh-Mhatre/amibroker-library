@@ -1,0 +1,130 @@
+procedure kStaticVarSet( SName, SValue ) {
+    ChartID = GetChartID();
+    InIndicator = Status("Action") == 1;
+	if( InIndicator ) StaticVarSet(Sname+ChartID, Svalue); 
+}
+
+function kStaticVarGet( SName ) { 
+    ChartID     = GetChartID();
+    Var = StaticVarGet(Sname+ChartID);
+    return Var;
+}
+
+procedure kStaticVarSetText( SName, SValue ) { 
+    ChartID     = GetChartID();
+    InIndicator = Status("Action") == 1;
+    if( InIndicator ) StaticVarSetText(Sname+ChartID, Svalue); 
+}
+
+function kStaticVarGetText( SName ) { 
+    ChartID = GetChartID();
+    return StaticVarGetText(Sname+ChartID); 
+}
+
+function Column_Begin( ColName ) {
+    global FontRatio, ColName, ColNumber, CellHeight, CellWidth, PanelXoffset, PanelYoffset;
+	
+    ColNumber = VarGet("ColNumber");
+    if( IsEmpty( ColNumber ) ) {
+        VarSet("ColNumber",1);
+        StaticVarSet("ClickCoordinates",0);
+    }
+    else VarSet("ColNumber", ++ColNumber);
+	
+    ColName = ColName+GetChartID();
+    
+	GfxSetOverlayMode( 0 );
+    GfxSelectFont( "Tahoma", CellHeight/FontRatio, 800 ); 
+    GfxSelectPen( colorBlack ); 
+    GfxSetBkMode( 1 );
+    
+	kStaticVarSet("RowNumber"+ColName, 0);
+    VarSetText("ColName",ColName);
+    
+	return ColNumber;
+}
+
+function Column_End( ) {
+    global CellHeight, CellWidth, PanelYoffset, PanelXoffset, ColNumber, RowNumber;
+	
+    ChartIDStr     = NumToStr(GetChartID(),1.0,False);
+    ColName         = VarGetText("ColName");
+    ULCellX         = PanelXoffset + (ColNumber-1) * CellWidth;
+    LRCellX        = ULCellX + CellWidth;
+    
+	for( Row = 1; Row <= RowNumber; Row++ ) {
+        ULCellY         = (Row-1) * CellHeight + PanelYoffset;
+        LRCellY        = ULCellY + CellHeight;
+        TextCell     = kStaticVarGetText("TextCell"+ColName+Row);
+        TextColor     = Nz(kStaticVarGet("TextColor"+ColName+Row));
+        BackColor     = Nz(kStaticVarGet("BackColor"+ColName+Row));
+        GfxSelectSolidBrush( BackColor);
+        GfxRectangle( ULCellX, ULCellY, LRCellX, LRCellY ); 
+        GfxSetBkColor( BackColor);
+        GfxSetTextColor( TextColor );
+        GfxDrawText( TextCell, ULCellX, ULCellY, LRCellX, LRCellY, 32 | 1 | 4);
+    }
+}
+
+function TextCell( TextCell, backColor, TextColor) {
+    global ColNumber, RowNumber;
+	
+    ColName = VarGetText("ColName");
+    RowNumber = Nz(kStaticVarGet("RowNumber"+ColName))+1;
+    
+	kStaticVarSet("RowNumber"+ColName, RowNumber);
+    kStaticVarSetText("TextCell"+ColName+RowNumber, TextCell);
+    kStaticVarSet("TextColor"+ColName+RowNumber, TextColor);
+    kStaticVarSet("BackColor"+ColName+RowNumber, backColor);
+}
+
+function NewColumn() {
+    VarSet("ColNumber", 0);
+}
+
+function CheckMouseClick( ColNumber, RowNumber ) {
+    global PanelYoffset, PanelXoffset, CellHeight, CellWidth;
+	
+    LButtonDown = GetCursorMouseButtons() == 9;    
+	Click = 0;
+	
+    if( LButtonDown ) {
+        ULCellX         = PanelXoffset + (ColNumber-1) * CellWidth;
+        LRCellX        = ULCellX + CellWidth;
+        ULCellY         = (RowNumber -1) * CellHeight + PanelYoffset;
+        LRCellY        = ULCellY + CellHeight;
+        MouseCoord = Nz(StaticVarGet("ClickCoordinates"));
+        if( MouseCoord == 0 AND LButtonDown )
+            {
+            MousePx = GetCursorXPosition( 1 );
+            MousePy = GetCursorYPosition( 1 );
+            if( MousePx > ULCellX AND MousePx < LRCellX AND MousePy > ULCellY AND MousePy < LRCellY )
+                {
+                StaticVarSet("ClickCoordinates",ColNumber*100+RowNumber);
+                Click = 1;
+                }
+            }
+	}
+
+    return Click;
+	
+}
+
+function TriggerCell( Label, backColor1, BackColor2, TextColor) {
+    global ColNumber, RowNumber;
+	
+    ColName = VarGetText("ColName");
+    RowNumber = Nz(kStaticVarGet("RowNumber"+ColName))+1;
+
+	kStaticVarSet("RowNumber"+ColName, RowNumber);
+
+	Trigger = CheckMouseClick( ColNumber, RowNumber );
+
+	if( Trigger ) BackColor = backColor2; else BackColor = backColor1;
+
+	kStaticVarSetText("TextCell"+ColName+RowNumber, Label);
+    kStaticVarSet("TextColor"+ColName+RowNumber, TextColor);
+    kStaticVarSet("BackColor"+ColName+RowNumber, backColor);
+
+	return Trigger;
+}
