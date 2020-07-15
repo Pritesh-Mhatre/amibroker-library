@@ -496,7 +496,7 @@ function getOrderExchangeId(pseudoAccount, orderId) {
 }
 
 /*
-* Retrieve order's variety.
+* Retrieve order's variety (REGULAR, BO, CO).
 */
 function getOrderVariety(pseudoAccount, orderId) {
 	return readOrderColumn(pseudoAccount, orderId, 6);
@@ -517,21 +517,21 @@ function getOrderIndependentSymbol(pseudoAccount, orderId) {
 }
 
 /*
-* Retrieve order's trade type.
+* Retrieve order's trade type (BUY, SELL).
 */
 function getOrderTradeType(pseudoAccount, orderId) {
 	return readOrderColumn(pseudoAccount, orderId, 9);
 }
 
 /*
-* Retrieve order's order type.
+* Retrieve order's order type (LIMIT, MARKET, STOP_LOSS, SL_MARKET).
 */
 function getOrderOrderType(pseudoAccount, orderId) {
 	return readOrderColumn(pseudoAccount, orderId, 10);
 }
 
 /*
-* Retrieve order's product type.
+* Retrieve order's product type (INTRADAY, DELIVERY, NORMAL).
 */
 function getOrderProductType(pseudoAccount, orderId) {
 	return readOrderColumn(pseudoAccount, orderId, 11);
@@ -574,6 +574,7 @@ function getOrderPendingQuantity(pseudoAccount, orderId) {
 
 /*
 * Retrieve order's (platform independent) status.
+* (OPEN, COMPLETE, CANCELLED, REJECTED, TRIGGER_PENDING, UNKNOWN)
 */
 function getOrderStatus(pseudoAccount, orderId) {
 	return readOrderColumn(pseudoAccount, orderId, 17);
@@ -587,7 +588,7 @@ function getOrderStatusMessage(pseudoAccount, orderId) {
 }
 
 /*
-* Retrieve order's validity.
+* Retrieve order's validity (DAY, IOC).
 */
 function getOrderValidity(pseudoAccount, orderId) {
 	return readOrderColumn(pseudoAccount, orderId, 19);
