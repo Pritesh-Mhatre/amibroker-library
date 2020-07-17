@@ -24,7 +24,7 @@ FILE_DEFAULT_WRITE_RETRY_COUNT = 50;
 FILE_DEFAULT_MAX_LINES_SAFETY_CHECK = 100000;
 
 /**
-* Amibroker function to write a given line along with newline character. Returns True on sucessfull write.
+* Amibroker function to write a given line along with newline character. Returns True on successful write.
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/File-Functions#fileWriteLineAdvanced
 */
@@ -49,7 +49,7 @@ function fileWriteLineAdvanced( filePath, mode, shared, retryCount, line )
 }
 
 /**
-* Amibroker function to write a given line along with newline character. Returns True on sucessfull write.
+* Amibroker function to write a given line along with newline character. Returns True on successful write.
 *
 * Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/File-Functions#fileWriteLine
 */

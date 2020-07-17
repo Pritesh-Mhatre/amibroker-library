@@ -172,7 +172,7 @@ function isDuplicateSignal(account, tradeType) {
 					+ AT_AVOID_REPEAT_ORDER_DELAY + "] seconds.");
 			}
 			
-			duplicate = TRUE;
+			duplicate = True;
 		}
 	}
 	
@@ -316,7 +316,7 @@ function placeBracketOrder(account, exchange, symbol, tradeType, orderType,
 	quantity, price, triggerPrice, target, stoploss, trailingStoploss, validate) {
 
 	return placeOrderAdvanced(AT_VARIETY_BO, account, exchange, symbol, 
-		tradeType, orderType, defaultProductType(), 
+		tradeType, orderType, AT_PRODUCT_INTRADAY, 
 		quantity, price, triggerPrice,
 		target, stoploss, trailingStoploss,
 		defaultDisclosedQuantity(), defaultValidity(), defaultAmo(),
@@ -335,7 +335,7 @@ function placeCoverOrder(account, exchange, symbol, tradeType, orderType,
 	quantity, price, triggerPrice, validate) {
 
 	return placeOrderAdvanced(AT_VARIETY_CO, account, exchange, symbol, 
-		tradeType, orderType, defaultProductType(), 
+		tradeType, orderType, AT_PRODUCT_INTRADAY, 
 		quantity, price, triggerPrice,
 		defaultTarget(), defaultStoploss(), defaultTrailingStoploss(),
 		defaultDisclosedQuantity(), defaultValidity(), defaultAmo(),
@@ -379,7 +379,7 @@ procedure printOrderModification(account, orderId, orderType, quantity,
 }
 
 /**
-* Modifies the order. Returns True successful modification request;
+* Modifies the order. Returns True on successful modification request;
 * otherwise returns False.
 * 
 * If a parameter is not applicable, then either pass blank (for text parameter) 
