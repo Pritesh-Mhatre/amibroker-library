@@ -279,6 +279,9 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 			_TRACE("Order placed: [" + orderStr + "], order id: " + orderId);
 		} else {
 			_TRACE("ERROR: Order placement failed: [" + orderStr + "]");
+			_TRACE("Either the commands file is missing or it is locked by another application.");
+			_TRACE("Kindly check the communication folder path in at-desktop settings.");
+			_TRACE("Communication path should be: " + IPC_DIR);
 			orderId = "";
 		}
 	}
