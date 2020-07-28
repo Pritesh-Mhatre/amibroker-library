@@ -460,6 +460,51 @@ function cancelOrder(account, id) {
 	return written;
 }
 
+
+/*
+* Cancels child orders of a bracket or cover order. 
+* This function is useful for exiting from bracket and cover order.
+* Pass the account & id you received after placing a bracket or cover order.
+*/
+function cancelOrderChildren(account, id) {
+	if(AT_DEBUG) {
+		_TRACE("Inside cancelOrderChildren, order id = " + id);
+	}
+
+	csv = AT_CANCEL_CHILD_ORDER_CMD 	+ AT_COMMA +
+			account 										+ AT_COMMA +
+			id;
+
+	written = fileWriteLine(COMMANDS_FILE, csv);
+	
+	if(written) {
+		_TRACE("Order cancel children request sent.");
+	} else {
+		_TRACE("Order cancel children request failed.");
+	}
+	
+	return written;
+}
+
+
+/*
+* Cancels or exits from order. This function is useful for exiting from bracket and cover order.
+* If the order is OPEN, it will be cancelled. If it is executed, system will cancel it's child orders;
+* which will result in exiting the position.
+* Pass account & id you received after placing a bracket or cover order.
+*/
+function cancelOrExitOrder(account, id) {
+	if(AT_DEBUG) {
+		_TRACE("Inside cancelOrExitOrder, order id = " + id);
+	}
+
+	// Cancel the Bracket order if it is open
+	cancelOrder(account, id);
+
+	// Exit from bracket order
+	cancelOrderChildren(account, id);
+}
+
 /*****************************************************************************/
 /************************ CANCEL/EXIT ORDER FUNCTIONS - END ***********************/
 /*****************************************************************************/
