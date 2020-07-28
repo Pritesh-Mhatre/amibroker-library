@@ -460,7 +460,6 @@ function cancelOrder(account, id) {
 	return written;
 }
 
-
 /*
 * Cancels child orders of a bracket or cover order. 
 * This function is useful for exiting from bracket and cover order.
@@ -485,7 +484,6 @@ function cancelOrderChildren(account, id) {
 	
 	return written;
 }
-
 
 /*
 * Cancels or exits from order. This function is useful for exiting from bracket and cover order.
