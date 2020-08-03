@@ -739,6 +739,42 @@ function getOrderStockBroker(pseudoAccount, orderId) {
 	return readOrderColumn(pseudoAccount, orderId, 33);
 }
 
+/*
+* Checks whether order is open.
+* orderId - should be the id returned by placeOrder function when you place an order.
+*/
+function isOrderOpen(pseudoAccount, orderId) {
+	oStatus = getOrderStatus(pseudoAccount, orderId);
+	return (StrToUpper(oStatus) == "OPEN" OR StrToUpper(oStatus) == "TRIGGER_PENDING");
+}
+
+/*
+* Checks whether order is complete.
+* orderId - should be the id returned by placeOrder function when you place an order.
+*/
+function isOrderComplete(pseudoAccount, orderId) {
+	oStatus = getOrderStatus(pseudoAccount, orderId);	
+	return StrToUpper(oStatus) == "COMPLETE";
+}
+
+/*
+* Checks whether order is rejected.
+* id - should be the id returned by placeOrder function when you place an order.
+*/
+function isOrderRejected(pseudoAccount, orderId) {
+	oStatus = getOrderStatus(pseudoAccount, orderId);	
+	return StrToUpper(oStatus) == "REJECTED";
+}
+
+/*
+* Checks whether order is cancelled.
+* id - should be the id returned by placeOrder function when you place an order.
+*/
+function isOrderCancelled(pseudoAccount, orderId) {
+	oStatus = getOrderStatus(pseudoAccount, orderId);	
+	return StrToUpper(oStatus) == "CANCELLED";
+}
+
 /*****************************************************************************/
 /************************ ORDER DETAIL FUNCTIONS - END ***********************/
 /*****************************************************************************/
