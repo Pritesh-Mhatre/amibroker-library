@@ -9,8 +9,8 @@
 /*
 * Returns True if the order is the first of the day for the current chart.
 */
-function isFirstOrder(account) {
-	lastTradeType = readLastOrderTradeType(account);
+function isFirstOrder(account, symbol) {
+	lastTradeType = readLastOrderTradeType(account, symbol);
 	return lastTradeType == "";
 }
 
@@ -18,9 +18,9 @@ function isFirstOrder(account) {
 * We double the quantity if order is not first, so that we can square off earlier position
 * and enter into a new position.
 */
-function calcDoubleQuantity(account, defaultQuantity) {
+function calcDoubleQuantity(account, symbol, defaultQuantity) {
 	qty = defaultQuantity;
-	if(isFirstOrder(account) == False) {
+	if(isFirstOrder(account, symbol) == False) {
 		qty = defaultQuantity * 2;
 	}
 	return qty;

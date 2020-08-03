@@ -121,7 +121,7 @@ if ( LastValue(Buy) == True )
 		* This is done so that we can re-enter a position. Following this approach
 		* we can avoid using Short & Cover.
 		*/
-		quantity = calcDoubleQuantity(AT_ACCOUNT, AT_QUANTITY);
+		quantity = calcDoubleQuantity(AT_ACCOUNT, AT_SYMBOL, AT_QUANTITY);
 
 		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
 			AT_PRODUCT_TYPE, quantity, buyPrice, defaultTriggerPrice(), True);
