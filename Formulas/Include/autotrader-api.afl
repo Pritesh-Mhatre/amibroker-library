@@ -95,40 +95,32 @@ function generateUniqueOrderId() {
 		convertIntegerToString(nextGlobalOrderNumber());
 }
 
-function accountSymbolKey(account, symbol) {
-	return account + "-" + symbol;
-}
-
 /*
 * Saves last order time, in a static variable.
 */
-procedure saveLastOrderTime(account, symbol, orderTime) {
-	saveStaticVariable(accountSymbolKey(account, symbol), 
-		AT_LAST_ORDER_TIME_KEY, orderTime);
+procedure saveLastOrderTime(account, orderTime) {
+	saveStaticVariable(account, AT_LAST_ORDER_TIME_KEY, orderTime);
 }
 
 /*
 * Fetches the last order time (if available).
 */
-function readLastOrderTime(account, symbol) {
-	return readStaticVariable(accountSymbolKey(account, symbol), 
-		AT_LAST_ORDER_TIME_KEY);	
+function readLastOrderTime(account) {
+	return readStaticVariable(account, AT_LAST_ORDER_TIME_KEY);	
 }
 
 /*
 * Saves last order trade type, in a static variable.
 */
-procedure saveLastOrderTradeType(account, symbol, tradeType) {
-	saveStaticVariableText(accountSymbolKey(account, symbol), 
-	AT_LAST_ORDER_TRADE_TYPE_KEY, StrToUpper(tradeType));
+procedure saveLastOrderTradeType(account, tradeType) {
+	saveStaticVariableText(account, AT_LAST_ORDER_TRADE_TYPE_KEY, StrToUpper(tradeType));
 }
 
 /*
 * Fetches the last order trade type (if available).
 */
-function readLastOrderTradeType(account, symbol) {
-	return readStaticVariableText(accountSymbolKey(account, symbol), 
-		AT_LAST_ORDER_TRADE_TYPE_KEY);
+function readLastOrderTradeType(account) {
+	return readStaticVariableText(account, AT_LAST_ORDER_TRADE_TYPE_KEY);
 }
 
 /*
@@ -158,11 +150,11 @@ function orderString(variety, symbol, tradeType, orderType, quantity,
 * in AmiBroker, which keeps on giving same signal for every tick 
 * until the candle is complete.
 */
-function isDuplicateSignal(account, tradeType, symbol) {
+function isDuplicateSignal(account, tradeType) {
 	duplicate = False;
 	
-	time = readLastOrderTime(account, symbol);
-	lastTradeType = readLastOrderTradeType(account, symbol);
+	time = readLastOrderTime(account);
+	lastTradeType = readLastOrderTradeType(account);
 	
 	if(time > 0) {
 		difference = DateTimeDiff(Now(5), time);
@@ -216,7 +208,7 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		// Perform validation
 		
 		// Perform duplicate signal check
-		if(isDuplicateSignal(account, tradeType, symbol)) {
+		if(isDuplicateSignal(account, tradeType)) {
 			_TRACE("Order failed validation: " + orderStr);
 			proceed = False;
 		}
@@ -282,8 +274,8 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		written = fileWriteLine(COMMANDS_FILE, csv);
 		
 		if(written) {
-			saveLastOrderTradeType(account, symbol, tradeType);
-			saveLastOrderTime(account, symbol, Now(5));
+			saveLastOrderTradeType(account, tradeType);
+			saveLastOrderTime(account, Now(5));
 			_TRACE("Order placed: [" + orderStr + "], order id: " + orderId);
 		} else {
 			_TRACE("ERROR: Order placement failed: [" + orderStr + "]");
