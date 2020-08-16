@@ -416,14 +416,14 @@ function modifyOrder(account, orderId, orderType, quantity, price,
 		
 	written = fileWriteLine(COMMANDS_FILE, csv);
 	
-	if(written) {
-		_TRACE("Order modify request sent.");
-	} else {
-		_TRACE("Order modify request failed.");
-	}
-	
 	printOrderModification(account, orderId, orderType, quantity, price, 
 		triggerPrice);
+	
+	if(written) {
+		_TRACE("Order modify request sent. Command: " + csv);
+	} else {
+		_TRACE("Order modify request failed. Command: " + csv);
+	}
 	
 	return written;
 }
@@ -450,7 +450,7 @@ function modifyOrderQuantity(account, orderId, quantity) {
 */
 function cancelOrder(account, id) {
 	if(AT_DEBUG) {
-		_TRACE("Cancelling order, order id = " + id);
+		_TRACE("Cancelling order, order id: " + id);
 	}
 
 	csv = AT_CANCEL_ORDER_CMD 		+ AT_COMMA +
@@ -460,9 +460,9 @@ function cancelOrder(account, id) {
 	written = fileWriteLine(COMMANDS_FILE, csv);
 	
 	if(written) {
-		_TRACE("Order cancel request sent.");
+		_TRACE("Order cancel request sent, order id: " + id);
 	} else {
-		_TRACE("Order cancel request failed.");
+		_TRACE("Order cancel request failed, order id: " + id);
 	}
 	
 	return written;
@@ -475,7 +475,7 @@ function cancelOrder(account, id) {
 */
 function cancelOrderChildren(account, id) {
 	if(AT_DEBUG) {
-		_TRACE("Inside cancelOrderChildren, order id = " + id);
+		_TRACE("Inside cancelOrderChildren, order id: " + id);
 	}
 
 	csv = AT_CANCEL_CHILD_ORDER_CMD 	+ AT_COMMA +
@@ -485,9 +485,9 @@ function cancelOrderChildren(account, id) {
 	written = fileWriteLine(COMMANDS_FILE, csv);
 	
 	if(written) {
-		_TRACE("Order cancel children request sent.");
+		_TRACE("Order cancel children request sent, order id: " + id);
 	} else {
-		_TRACE("Order cancel children request failed.");
+		_TRACE("Order cancel children request failed, order id: " + id);
 	}
 	
 	return written;
@@ -517,7 +517,90 @@ function cancelOrExitOrder(account, id) {
 
 
 /*****************************************************************************/
-/************************ ORDER DETAIL FUNCTIONS - END ***********************/
+/************************ SQUARE OFF FUNCTIONS - START ***********************/
+/*****************************************************************************/
+
+/**
+* Submits a square-off request for the given position.
+*
+* pseudoAccount - account to which the position belongs
+* category - position category (DAY, NET). Pass DAY if you are not sure.
+* type - position type (MIS, NRML, CNC, BO, CO) 
+* independentExchange - broker independent exchange
+* independentSymbol - broker independent symbol
+*/
+function squareOffPosition(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	
+	positionStr = pseudoAccount 				+ AT_PIPE +
+						category						+ AT_PIPE +
+						type								+ AT_PIPE +
+						independentExchange	+ AT_PIPE +
+						independentSymbol;
+	
+	if(AT_DEBUG) {
+		_TRACE("Inside squareOffPosition, position: [" + positionStr + "]");
+	}
+
+	csv = AT_SQUARE_OFF_POSITION 		+ AT_COMMA +
+			pseudoAccount 							+ AT_COMMA +
+			category									+ AT_COMMA +
+			type											+ AT_COMMA +
+			independentExchange				+ AT_COMMA +
+			independentSymbol;
+
+	written = fileWriteLine(COMMANDS_FILE, csv);
+	
+	if(written) {
+		_TRACE("Square-off position request sent. Position: [" + positionStr + "]");
+	} else {
+		_TRACE("Square-off position request failed. Position: [" + positionStr + "]");
+	}
+	
+	return written;
+}
+
+/**
+* Submits a square-off request for the given account.
+* Server will square-off all open positions in the given account.
+*
+* pseudoAccount - account to which the position belongs
+* category - position category (DAY, NET). Pass DAY if you are not sure.
+* type - position type (MIS, NRML, CNC, BO, CO) 
+* independentExchange - broker independent exchange
+* independentSymbol - broker independent symbol
+*/
+function squareOffPortfolio(pseudoAccount, category) {
+	
+	portfolioStr = pseudoAccount 				+ AT_PIPE +
+						category;
+	
+	if(AT_DEBUG) {
+		_TRACE("Inside squareOffPortfolio, portfolio: [" + portfolioStr + "]");
+	}
+
+	csv = AT_SQUARE_OFF_PORTFOLIO 	+ AT_COMMA +
+			pseudoAccount 							+ AT_COMMA +
+			category;
+
+	written = fileWriteLine(COMMANDS_FILE, csv);
+	
+	if(written) {
+		_TRACE("Square-off portfolio request sent. Portfolio: [" + portfolioStr + "]");
+	} else {
+		_TRACE("Square-off portfolio request failed. Portfolio: [" + portfolioStr + "]");
+	}
+	
+	return written;
+}
+
+/*****************************************************************************/
+/************************ SQUARE OFF FUNCTIONS - END ***********************/
+/*****************************************************************************/
+
+
+/*****************************************************************************/
+/************************ ORDER DETAIL FUNCTIONS - START ***********************/
 /*****************************************************************************/
 
 /*
