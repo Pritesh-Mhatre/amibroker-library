@@ -566,9 +566,6 @@ function squareOffPosition(pseudoAccount, category, type,
 *
 * pseudoAccount - account to which the position belongs
 * category - position category (DAY, NET). Pass DAY if you are not sure.
-* type - position type (MIS, NRML, CNC, BO, CO) 
-* independentExchange - broker independent exchange
-* independentSymbol - broker independent symbol
 */
 function squareOffPortfolio(pseudoAccount, category) {
 	
