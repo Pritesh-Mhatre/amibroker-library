@@ -71,13 +71,6 @@ function shouldSquareOff() {
 }
 
 /*
-* Returns True, if the order is the first of the day for the current chart.
-*/
-function isFirstOrder(account, symbol) {
-	return readLastOrderTradeType(account, symbol) == "";
-}
-
-/*
 * Calculates profit order price.
 */
 function calculateProfitTarget(entryTradeType, entryPrice, profitPct) {
