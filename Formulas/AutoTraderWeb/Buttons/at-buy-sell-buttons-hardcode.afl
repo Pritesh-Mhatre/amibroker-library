@@ -3,6 +3,10 @@
 * This example does not make use of chart parameters.
 * It shows how you can directly hardcode the values in API function calls.
 * 
+* User Guide: https://stocksdeveloper.in/documentation/index/
+* API Docs: https://stocksdeveloper.in/documentation/api/
+* Symbol Search: https://stocksdeveloper.in:9013/instrument
+* 
 * Author - AutoTrader Web Team
 */
 
