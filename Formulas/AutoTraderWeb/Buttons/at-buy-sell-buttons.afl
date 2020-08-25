@@ -1,0 +1,46 @@
+/**
+* AmiBroker BUY/SELL buttons Regular Order example. 
+* You need to set appropriate values in chart parameters.
+* 
+* Author - AutoTrader Web Team
+*/
+
+#include <autotrader-button.afl>
+#include <autotrader.afl>
+
+global ColNumber;
+
+CellHeight = Param("Cell Height",20,5,200,1); 
+CellWidth = Param("Cell Width",120,5,200,1); 
+PanelYoffset = Param("Cell Row Offset (px)",10,0,Status("pxheight"),1); 
+PanelXoffset = Param("Cell Column Offset (px)",10,0,Status("pxwidth"),1); 
+FontRatio = Param("Font: CellHeight ratio",2,1,20,0.1);
+
+Column_Begin( "1" );
+	BuyCommand = TriggerCell( "BUY", colorBrightGreen, colorAqua, colorBlack);
+Column_End( );
+
+Column_Begin( "2" );
+	SellCommand = TriggerCell( "SELL", colorRed, colorLightOrange, colorBlack);
+Column_End( );
+
+ClickCoordinates = Nz(StaticVarGet("ClickCoordinates"));
+switch( ClickCoordinates )
+{
+    case 101:
+		_TRACE("Placing a BUY market order");
+		
+		// You can write any of AutoTrader Web API functions here		
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, 
+			"BUY", "MARKET", AT_PRODUCT_TYPE, AT_QUANTITY, 
+			0, defaultTriggerPrice(), False);
+    break;
+    case 201:
+		_TRACE("Placing a SELL market order");
+		
+		// You can write any of AutoTrader Web API functions here
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, 
+			"SELL", "MARKET", AT_PRODUCT_TYPE, AT_QUANTITY, 
+			0, defaultTriggerPrice(), False);
+    break;
+}

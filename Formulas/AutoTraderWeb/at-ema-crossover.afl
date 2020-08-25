@@ -1,3 +1,10 @@
+/**
+* AmiBroker moving average crossover with square-off option. 
+* You need to set appropriate values in chart parameters.
+* 
+* Author - AutoTrader Web Team
+*/
+
 /******************************************************************** 
 * SECTION 1 - BEGIN
 * This section contains all includes & should be at the top of your strategy afl.
