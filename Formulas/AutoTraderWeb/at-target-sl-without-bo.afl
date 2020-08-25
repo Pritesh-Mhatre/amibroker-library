@@ -67,13 +67,7 @@ function isSquareOffRequestSent() {
 }
 
 function shouldSquareOff() {
-	result = False;
-	
-	if((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME)) {
-		result = True;
-	}
-	
-	return result;
+	return ((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME));
 }
 
 /*
