@@ -80,7 +80,7 @@ function shouldSquareOff() {
 * Returns True, if the order is the first of the day for the current chart.
 */
 function isFirstOrder(account, symbol) {
-	return (readLastOrderTradeType(account, symbol) == "");
+	return readLastOrderTradeType(account, symbol) == "";
 }
 
 /*
@@ -291,7 +291,7 @@ else {
 	
 	/* Get exit order ids */
 	profitOrderId = readStaticVariableText(AT_ACCOUNT, PROFIT_ORDER_KEY);
-	stoplossOrderId = readStaticVariableText(AT_ACCOUNT, STOPLOSS_ORDER_KEY)
+	stoplossOrderId = readStaticVariableText(AT_ACCOUNT, STOPLOSS_ORDER_KEY);
 	
 	/* Cancel stoploss order if profit order is complete */
 	if(isOrderComplete(AT_ACCOUNT, profitOrderId)) {
