@@ -60,3 +60,25 @@ function amiStaticVarGetText(key )
 	global amiStaticVarKey;
 	return StaticVarGetText(key + amiStaticVarKey);
 }
+
+/*
+* Reverses trade type, return BUY for SELL an vice versa.
+*/
+function reverseTradeType(tradeType) {
+	result = "";
+	
+	if(tradeType == "SELL") {
+		result = "BUY";
+	}
+	if(tradeType == "BUY") {
+		result = "SELL";
+	}
+	if(tradeType == "SHORT") {
+		result = "COVER";
+	}
+	if(tradeType == "COVER") {
+		result = "SHORT";
+	}
+	
+	return result;
+}

@@ -58,10 +58,10 @@ function isSquareOffRequestSent() {
 }
 
 function shouldSquareOff() {
-	result = 0;
+	result = False;
 	
 	if((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME)) {
-		result = 1;
+		result = True;
 	}
 	
 	return result;
@@ -124,9 +124,9 @@ Plot(C, "Close", colorRed, styleCandle);
 ********************************************************************/
 
 /*
-* shouldSquareOff() returns 1 when current time goes beyond square off time.
+* shouldSquareOff() returns True, when current time goes beyond square off time.
 */
-if(shouldSquareOff() == 1 && !isSquareOffRequestSent()) {
+if(shouldSquareOff() && !isSquareOffRequestSent()) {
 	// Square off position, as current time has gone passed square off time
 	// Assuming the position is MIS
 	squareOffPosition(AT_ACCOUNT, "DAY", "MIS", AT_EXCHANGE, AT_SYMBOL);

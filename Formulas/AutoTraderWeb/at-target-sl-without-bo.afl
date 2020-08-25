@@ -1,0 +1,319 @@
+/**
+* AmiBroker moving average with target & stoploss without using bracket order.
+* This is similar to placing a bracket order. Always use bracket order, 
+* if it is available to you. Otherwise you can use this approach.
+* You need to set appropriate values in chart parameters.
+* 
+* User Guide: https://stocksdeveloper.in/documentation/index/
+* API Docs: https://stocksdeveloper.in/documentation/api/
+* Symbol Search: https://stocksdeveloper.in:9013/instrument
+* 
+* Author - AutoTrader Web Team
+*/
+
+/******************************************************************** 
+* SECTION 1 - BEGIN
+* This section contains all includes & should be at the top of your strategy afl.
+********************************************************************/
+
+#include <autotrader.afl>
+
+/******************************************************************** 
+* SECTION 1 - END
+********************************************************************/
+
+
+/*******************************************************************
+* This strategy demonstrates order operations.
+* 
+* 
+* Moving average crossover strategy. The rules are as follows:
+* 1. We enter into position only once.
+* 2. Once we enter a position, we place profit & stoploss orders.
+* 3. If profit order is complete, then we cancel stoploss order.
+* 4. If stoploss order is complete, then we cancel profit order.
+*
+* NOTE: This is similar to placing a bracket order. Always use bracket
+* order, if it is available to you. Otherwise you can use this approach.
+*
+* NOTE: It is recommended to start with a blank chart.
+********************************************************************/
+
+/*******************************************************************
+* How to see strategy logs in AMIBroker?
+* 1. Enable log window from amibroker menu (Window -> Log)
+* 2. You will see log window at the bottom.
+* 3. Go to "Trace" tab (all strategy logs are printed here).
+********************************************************************/
+
+
+/******************************************************************** 
+* SECTION 2 - BEGIN
+* This section contains your strategy afl code.
+********************************************************************/
+
+_SECTION_BEGIN("Square-off");
+
+// Square off parameters
+AT_SQUARE_OFF_FLAG = ParamToggle("Intraday Auto Square-off", "OFF|ON", 0);
+AT_SQUARE_OFF_TIME = ParamTime( "Intraday Square-off Time", "15:00:00"); 
+AT_SQUARE_OFF_STATUS_KEY = "SQUARE_OFF_STATUS";
+
+_SECTION_END();
+
+function isSquareOffRequestSent() {
+	soffStatus = readStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY);
+	return soffStatus > 0;
+}
+
+function shouldSquareOff() {
+	result = False;
+	
+	if((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME)) {
+		result = True;
+	}
+	
+	return result;
+}
+
+/*
+* Returns True, if the order is the first of the day for the current chart.
+*/
+function isFirstOrder(account, symbol) {
+	return (readLastOrderTradeType(account, symbol) == "");
+}
+
+/*
+* Calculates profit order price.
+*/
+function calculateProfitTarget(entryTradeType, entryPrice, profitPct) {
+	result = 0;
+	
+	if(entryTradeType == "BUY" OR entryTradeType == "COVER") {
+		result = entryPrice * (1 + (profitPct / 100));
+	}
+	
+	if(entryTradeType == "SELL" OR entryTradeType == "SHORT") {
+		result = entryPrice * (1 - (profitPct / 100));
+	}
+	
+	return result;	
+}
+
+/*
+* Calculates stoploss order price.
+*/
+function calculateStoplossTarget(entryTradeType, entryPrice, stoplossPct) {
+	result = 0;
+	
+	if(entryTradeType == "BUY" OR entryTradeType == "COVER") {
+		result = entryPrice * (1 - (stoplossPct / 100));
+	}
+	
+	if(entryTradeType == "SELL" OR entryTradeType == "SHORT") {
+		result = entryPrice * (1 + (stoplossPct / 100));
+	}
+	
+	return result;	
+}
+
+_SECTION_BEGIN("Moving Average");
+
+// Moving Average
+SHORT_MA_PERIOD = Param("Short term moving average period", 20, 1, 200, 2);
+LONG_MA_PERIOD = Param("Long term moving average period", 40, 1, 200, 2);
+
+// Targets
+PROFIT_PCT = Param("Profit percentage", 1, 0.01, 20, 1);
+STOPLOSS_PCT = Param("Stoploss percentage", 1, 0.01, 20, 1);
+
+// Refresh even when minimized, see below link
+// https://forum.amibroker.com/t/program-pauses-when-amibroker-minimized/4145/2
+RefreshPeriod = Param( "Timed Refresh Period", 5, 1, 300);
+RequestTimedRefresh(RefreshPeriod, False);
+
+ENTRY_ORDER_KEY = "ENTRY_ORDER";
+PROFIT_ORDER_KEY = "PROFIT_ORDER";
+STOPLOSS_ORDER_KEY = "STOPLOSS_ORDER";
+ENTRY_ORDER_TRADE_TYPE_KEY = "ENTRY_ORDER_TRADE_TYPE";
+
+/* Exponential Moving averages */
+EMA1 = EMA( C, SHORT_MA_PERIOD); 
+EMA2 = EMA( C, LONG_MA_PERIOD);
+
+/* Buy and Sell Condition */
+Buy = Cross(EMA1,EMA2);
+Sell = Cross(EMA2,EMA1);
+
+/* Remove excess signals */
+Buy = ExRem(Buy,Sell);
+Sell = ExRem(Sell,Buy);
+
+/* Instead of using Short & Cover; we will double the quantity */
+//Short = Sell;
+//Cover = Buy;
+
+/* Prices when Buy, Sell, Short, Cover condition is true  */
+//buyPrice = ValueWhen(Buy,C);
+//sellPrice = ValueWhen(Sell,C);
+
+/* We use live prices here, as ValueWhen function gives negative price sometimes */
+buyPrice = LastValue(C);
+sellPrice = LastValue(C);
+
+/* Plot Buy and Sell Signal Arrows */
+shape = Buy * shapeUpArrow + Sell * shapeDownArrow;
+PlotShapes( shape, IIf( Buy, colorGreen, colorRed ), 0, IIf( Buy, Low, High ) );
+GraphXSpace = 5;
+
+/* Plot EMA lines and Candles */
+Plot(EMA1,"EMA", colorRed);
+Plot(EMA2,"EMA2", colorGreen);
+Plot(C, "Close", colorRed, styleCandle);
+
+
+/******************************************************************** 
+* SECTION 2 - END
+********************************************************************/
+
+
+/******************************************************************** 
+* SECTION 3 - BEGIN
+* This section contains your code for placing orders.
+********************************************************************/
+
+/*
+* shouldSquareOff() returns True, when current time goes beyond square off time.
+*/
+if(shouldSquareOff() && !isSquareOffRequestSent()) {
+	// Square off position, as current time has gone passed square off time
+	// Assuming the position is MIS
+	squareOffPosition(AT_ACCOUNT, "DAY", "MIS", AT_EXCHANGE, AT_SYMBOL);
+	
+	saveStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY, 1);
+}
+else {
+
+	/*****************************************************************
+	* ENTER INTO A POSITION
+	*****************************************************************/
+
+	/*
+	* isFirstOrder() returns True, if the order is the first of the day for the current chart.
+	* We are using it here, to make sure we enter only once into a position.
+	*/
+	if(isFirstOrder(AT_ACCOUNT, AT_SYMBOL)) {
+		
+		if ( LastValue(Buy) == True )
+		{
+			tradeType = "BUY";
+			orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, tradeType, "MARKET", 
+				"INTRADAY", AT_QUANTITY, buyPrice, defaultTriggerPrice(), True);
+			
+			/* Save entry order id for later use */
+			saveStaticVariableText(AT_ACCOUNT, ENTRY_ORDER_KEY, orderId);
+			saveStaticVariableText(AT_ACCOUNT, ENTRY_ORDER_TRADE_TYPE_KEY, tradeType);
+		}
+
+		if ( LastValue(Sell) == True )
+		{
+			tradeType = "SELL";
+			orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, tradeType, "MARKET", 
+				"INTRADAY", AT_QUANTITY, buyPrice, defaultTriggerPrice(), True);
+			
+			/* Save entry order id for later use */
+			saveStaticVariableText(AT_ACCOUNT, ENTRY_ORDER_KEY, orderId);
+			saveStaticVariableText(AT_ACCOUNT, ENTRY_ORDER_TRADE_TYPE_KEY, tradeType);
+		}
+	}
+	
+	
+	/*****************************************************************
+	* ENTER PROFIT & STOPLOSS ORDERS
+	*****************************************************************/
+	
+	/* Get entry order id */
+	entryOrderId = readStaticVariableText(AT_ACCOUNT, ENTRY_ORDER_KEY);	
+	
+	if(entryOrderId != "") {
+
+		/* Check whether order status is complete */
+		if(isOrderComplete(AT_ACCOUNT, entryOrderId)) {
+			
+			/* Calculate exit order trade type */
+			entryTradeType = readStaticVariableText(AT_ACCOUNT, ENTRY_ORDER_TRADE_TYPE_KEY);
+			exitTradeType = reverseTradeType(entryTradeType);
+			
+			/* Check whether we have already placed profit order */
+			if(readStaticVariableText(AT_ACCOUNT, PROFIT_ORDER_KEY) == "") {				
+				entryPrice = getOrderAveragePrice(AT_ACCOUNT, entryOrderId);
+				_TRACE("Entry order is complete, placing profit order. Entry order price: " + entryPrice);
+
+				if(entryPrice > 0) {
+					profitPrice = calculateProfitTarget(entryTradeType, entryPrice, PROFIT_PCT);
+
+					_TRACE("Profit order price = " + profitPrice);				
+
+					orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, exitTradeType, "LIMIT", 
+						"INTRADAY", AT_QUANTITY, profitPrice, defaultTriggerPrice(), False);
+					
+					saveStaticVariableText(AT_ACCOUNT, PROFIT_ORDER_KEY, orderId);
+				} else {
+					_TRACE("Profit order skipped, as entry order price is zero.");				
+				}
+			}
+			
+			/* Check whether we have already placed stoploss order */
+			if(readStaticVariableText(AT_ACCOUNT, STOPLOSS_ORDER_KEY) == "") {
+				entryPrice = getOrderAveragePrice(AT_ACCOUNT, entryOrderId);
+				_TRACE("Entry order is complete, placing stoploss order. Entry order price: " + entryPrice);
+
+				if(entryPrice > 0) {
+					triggerPrice = calculateStoplossTarget(entryTradeType, entryPrice, PROFIT_PCT);
+					
+					_TRACE("Stoploss order trigger price = " + triggerPrice);				
+
+					orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, exitTradeType, "SL_MARKET", 
+						"INTRADAY", AT_QUANTITY, 0, triggerPrice, Flase);
+					
+					saveStaticVariableText(AT_ACCOUNT, STOPLOSS_ORDER_KEY, orderId);
+				} else {
+					_TRACE("Stoploss order skipped, as entry order price is zero.");				
+				}
+			}
+		}	
+	}
+	
+	
+	/*****************************************************************
+	* CANCEL OTHER ORDER WHEN EITHER PROFIT OR STOPLOSS IS HIT.
+	*****************************************************************/
+	
+	/* Get exit order ids */
+	profitOrderId = readStaticVariableText(AT_ACCOUNT, PROFIT_ORDER_KEY);
+	stoplossOrderId = readStaticVariableText(AT_ACCOUNT, STOPLOSS_ORDER_KEY)
+	
+	/* Cancel stoploss order if profit order is complete */
+	if(isOrderComplete(AT_ACCOUNT, profitOrderId)) {
+		if(isOrderOpen(AT_ACCOUNT, stoplossOrderId)) {
+			_TRACE("Profit order complete, cancelling stoploss order.");
+			cancelOrder(AT_ACCOUNT, stoplossOrderId);
+		}
+	}
+	
+	/* Cancel profit order if stoploss order is complete */
+	if(isOrderComplete(AT_ACCOUNT, stoplossOrderId)) {
+		if(isOrderOpen(AT_ACCOUNT, profitOrderId)) {
+			_TRACE("Stoploss order complete, cancelling profit order.");
+			cancelOrder(AT_ACCOUNT, profitOrderId);
+		}
+	}
+
+}
+
+
+/******************************************************************** 
+* SECTION 3 - END
+********************************************************************/
+
+_SECTION_END();
