@@ -32,6 +32,11 @@ Massively reduce trading costs based on following features:
   - Angel Broking Web
 - A **[complete list of features](https://stocksdeveloper.in/autotrader-web-features/)**
 
+## Help
+- **[User Guide](https://stocksdeveloper.in/documentation/index/)**
+- **[User Guide - AmiBroker Library](https://stocksdeveloper.in/documentation/client-setup/amibroker-library/)**
+- **[User Guide - API Docs](https://stocksdeveloper.in/documentation/api/)**
+
 # amibroker-library
 
 A public free to use library to help AmiBroker AFL programmers with their analysis and trading strategies.
