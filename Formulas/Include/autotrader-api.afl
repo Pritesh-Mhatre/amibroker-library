@@ -32,6 +32,8 @@ AT_PRODUCT_TYPE = ParamList("Product Type", "INTRADAY|DELIVERY|NORMAL");
 
 AT_QUANTITY = Param("Quantity", 1, 0, 300000, 10);
 
+AT_USE_PRECISION = ParamToggle("Use price precision, used for rounding price", "OFF|ON", 0);
+
 AT_PRICE_PRECISION = StrToNum(ParamList(
 	"Price precision, used for rounding price", "4|3|2|1|0"));
 
@@ -230,20 +232,30 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		// Save order generation time
 		publishTime = convertIntegerToString(
 			convertDateTimeToMillisSinceEpoch(LastValue(DateTime())));
+				
+		// Convert data into text in order to write it to a CSV file
 		
-		// Convert data into text in order to write it to a CSV file		
-		priceStr = StrFormat("%.5f", prec(
-			IIF( price < 0, 0, price ), AT_PRICE_PRECISION));
-		triggerPriceStr = StrFormat("%.5f", prec(
-			IIF( triggerPrice < 0, 0, triggerPrice ), AT_PRICE_PRECISION));
-		targetStr = StrFormat("%.5f", prec(
-			IIF( target < 0, 0, target ), AT_PRICE_PRECISION));
-		stoplossStr = StrFormat("%.5f", prec(
-			IIF( stoploss < 0, 0, stoploss ), AT_PRICE_PRECISION));
-		trailingStoplossStr = StrFormat("%.5f", prec(
-			IIF( trailingStoploss < 0, 0, trailingStoploss ), 
-			AT_PRICE_PRECISION));
-			
+		if(AT_USE_PRECISION) {
+			priceStr = StrFormat("%.5f", prec(
+				IIF( price < 0, 0, price ), AT_PRICE_PRECISION));
+			triggerPriceStr = StrFormat("%.5f", prec(
+				IIF( triggerPrice < 0, 0, triggerPrice ), AT_PRICE_PRECISION));
+			targetStr = StrFormat("%.5f", prec(
+				IIF( target < 0, 0, target ), AT_PRICE_PRECISION));
+			stoplossStr = StrFormat("%.5f", prec(
+				IIF( stoploss < 0, 0, stoploss ), AT_PRICE_PRECISION));
+			trailingStoplossStr = StrFormat("%.5f", prec(
+				IIF( trailingStoploss < 0, 0, trailingStoploss ), 
+				AT_PRICE_PRECISION));
+		} else {
+			priceStr = NumToStr( price, 1.4, False );
+			triggerPriceStr = NumToStr( triggerPrice, 1.4, False );
+			targetStr = NumToStr( target, 1.4, False );
+			stoplossStr = NumToStr( stoploss, 1.4, False );
+			trailingStoplossStr = NumToStr( trailingStoploss, 1.4, False );
+		}
+
+		
 		if(amo) {
 			amoStr = "true";
 		} else {
@@ -398,10 +410,16 @@ procedure printOrderModification(account, orderId, orderType, quantity,
 */
 function modifyOrder(account, orderId, orderType, quantity, price, 
 	triggerPrice) {
-	priceStr = StrFormat("%.5f", prec(price, AT_PRICE_PRECISION));
-	triggerPriceStr = StrFormat("%.5f", 
-		prec(triggerPrice, AT_PRICE_PRECISION));
 	
+	if(AT_USE_PRECISION) {
+		priceStr = StrFormat("%.5f", prec(price, AT_PRICE_PRECISION));
+		triggerPriceStr = StrFormat("%.5f", 
+			prec(triggerPrice, AT_PRICE_PRECISION));
+	} else {
+		priceStr = NumToStr( price, 1.4, False );
+		triggerPriceStr = NumToStr( triggerPrice, 1.4, False );
+	}
+
 	csv = AT_MODIFY_ORDER_CMD		+ AT_COMMA +
 		account 									+ AT_COMMA + 
 		orderId 										+ AT_COMMA + 

@@ -11,6 +11,7 @@ WIN_SEPARATOR = "\\";
 UNIX_SEPARATOR = "/";
 
 /* Inter process communication directory */
+/* This directory should be same as the one set on at-desktop client */
 IPC_DIR = "C:\\Users\\<your_windows_user_name>\\autotrader";
 
 /* Directory that contains input files for AutoTrader */
