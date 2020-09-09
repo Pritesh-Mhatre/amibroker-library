@@ -147,12 +147,14 @@ Sell=ExRem(Sell,Buy);
 /*
 * shouldSquareOff() returns 1 when current time goes beyond square off time.
 */
-if(shouldSquareOff() && !isSquareOffRequestSent()) {
-	// Square off position, as current time has gone passed square off time
-	// Assuming the position is MIS
-	squareOffPosition(AT_ACCOUNT, "DAY", "MIS", AT_EXCHANGE, AT_SYMBOL);
-	
-	saveStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY, 1);
+if(shouldSquareOff()) {
+	if(!isSquareOffRequestSent()) {
+		// Square off position, as current time has gone passed square off time
+		// Assuming the position is MIS
+		squareOffPosition(AT_ACCOUNT, "DAY", "MIS", AT_EXCHANGE, AT_SYMBOL);
+		
+		saveStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY, 1);
+	}
 }
 else {
 
