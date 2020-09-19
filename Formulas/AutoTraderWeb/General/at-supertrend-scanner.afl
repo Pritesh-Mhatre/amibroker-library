@@ -1,0 +1,271 @@
+/**
+* AmiBroker supertrend with square-off option. 
+* This afl shows the changes you need to run a AFL in scanner.
+* There is also a provision to use a symbol mapping file & quantity file.
+* You need to set appropriate values in scanner parameters.
+******************************************************************* 
+* The symbol mapping file should contain comma separated values.
+* Format: Datafeed Symbol,AutoTrader Web Symbol
+* Example: 
+* BANKNIFTY-I,BANKNIFTY_24-SEP-2020_FUT
+* BANKNIFTY-II,BANKNIFTY_26-NOV-2020_FUT
+* NIFTY-I,NIFTY_24-SEP-2020_FUT
+******************************************************************** 
+* The quantity mapping file should contain comma separated values.
+* Format: Datafeed Symbol,Quantity
+* Example: 
+* BANKNIFTY-I,50
+* BANKNIFTY-II,25
+* NIFTY-I,75
+*******************************************************************
+* User Guide: https://stocksdeveloper.in/documentation/index/
+* API Docs: https://stocksdeveloper.in/documentation/api/
+* Symbol Search: https://stocksdeveloper.in:9013/instrument
+* 
+* Author - AutoTrader Web Team
+*/
+
+/******************************************************************** 
+* SECTION 1 - BEGIN
+* This section contains all includes & should be at the top of your strategy afl.
+********************************************************************/
+
+#include <autotrader.afl>
+
+/******************************************************************** 
+* SECTION 1 - END
+********************************************************************/
+
+/*******************************************************************
+* SuperTrend indicator based automated trading afl example.
+* 
+* NOTE: It is recommended to start with a blank chart.
+********************************************************************/
+
+/*******************************************************************
+* How to see strategy logs in AMIBroker?
+* 1. Enable log window from amibroker menu (Window -> Log)
+* 2. You will see log window at the bottom.
+* 3. Go to "Trace" tab (all strategy logs are printed here).
+********************************************************************/
+
+
+/******************************************************************** 
+* SECTION 2 - BEGIN
+* This section contains your strategy afl code.
+********************************************************************/
+
+_SECTION_BEGIN("Files");
+
+// A flag to indicate whether symbols must be loaded from a mapping file
+AT_USE_SYMBOL_MAPPING = ParamToggle("Use symbol mapping file", "OFF|ON", 0);
+AT_SYMBOL_MAPPING_FILE = ParamStr("Symbol maping file", "C:\\symbol-mapping.csv");
+
+/*
+* Looks for a AutoTrader Web's symbol in the mapping file. 
+* Allows you to map datafeed provider's symbols to AutoTrader Web's symbols.
+* On error, it will return same symbol that was passed to it.
+*/
+function getSymbol(datafeedSymbol) {
+	atWebSymbol = datafeedSymbol;
+	
+	if(AT_USE_SYMBOL_MAPPING) {
+		fileSymbol = fileReadCsvColumnByRowId(AT_SYMBOL_MAPPING_FILE, datafeedSymbol, 1, 2);
+		if(fileSymbol == "") {
+			_TRACE("Could not find AutoTrader Web's symbol for [" + datafeedSymbol + "].");
+			_TRACE("Please make sure following line exists in the file [" + AT_SYMBOL_MAPPING_FILE + "].");
+			_TRACE(datafeedSymbol + ",<AUTOTRADER_WEB_SYMBOL>");			
+		} else {
+			atWebSymbol = fileSymbol;
+		}
+	}
+
+	return atWebSymbol;
+}
+
+// A flag to indicate whether quantity must be loaded from a quantity file
+// This allows you to use different quantity per scanner symbol
+AT_USE_QUANTITY_MAPPING = ParamToggle("Use quantity mapping file", "OFF|ON", 0);
+AT_QUANTITY_MAPPING_FILE = ParamStr("Quantity maping file", "C:\\quantity-mapping.csv");
+
+/*
+* Looks for a quantity in the mapping file. 
+* Allows you to map different quantity for each scanner symbol.
+* On error, it will return quantity set in chart parameters.
+*/
+function getQuantity(datafeedSymbol) {
+	quantity = AT_QUANTITY;
+	
+	if(AT_USE_QUANTITY_MAPPING) {
+		fileQuantity = fileReadCsvColumnByRowId(AT_QUANTITY_MAPPING_FILE, datafeedSymbol, 1, 2);
+		if(fileQuantity == "") {
+			_TRACE("Could not find quantity for [" + datafeedSymbol + "].");
+			_TRACE("Please make sure following line exists in the file [" + AT_QUANTITY_MAPPING_FILE + "].");
+			_TRACE(datafeedSymbol + ",<SYMBOL_QUANTITY>");			
+		} else {
+			quantity = StrToNum(fileQuantity);
+		}
+	}
+
+	return quantity;
+}
+
+_SECTION_END();
+
+
+_SECTION_BEGIN("Square-off");
+
+// Square off parameters
+AT_SQUARE_OFF_FLAG = ParamToggle("Intraday Auto Square-off", "OFF|ON", 0);
+AT_SQUARE_OFF_TIME = ParamTime( "Intraday Square-off Time", "15:00:00"); 
+AT_SQUARE_OFF_STATUS_KEY = "SQUARE_OFF_STATUS";
+
+function isSquareOffRequestSent() {
+	soffStatus = readStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY);
+	return soffStatus > 0;
+}
+
+function shouldSquareOff() {
+	result = False;
+	
+	if((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME)) {
+		result = True;
+	}
+	
+	return result;
+}
+
+_SECTION_END();
+
+
+_SECTION_BEGIN("Supertrend");         
+
+// SuperTrend parameters
+Multiplier = Param("Period", 7, 1, 50 );
+Period = Param("Multiplier", 3, 1, 10 );
+
+// Chart parameters
+UpColor = ParamColor("Up Color", colorGreen);
+DownColor = ParamColor("Down Color", colorRed);
+WickUpColor = ParamColor("Wick UP Color", colorLime);
+WickDownColor = ParamColor("Wick Down Color", colorOrange);
+ResistanceColor = ParamColor("Resistance", colorRed);
+SupportColor = ParamColor( "Support", colorGreen);
+Style = ParamStyle("Line Style", styleThick);
+
+// Refresh even when minimized, see below link
+// https://forum.amibroker.com/t/program-pauses-when-amibroker-minimized/4145/2
+RefreshPeriod = Param( "Timed Refresh Period", 5, 1, 300);
+RequestTimedRefresh(RefreshPeriod, False);
+   
+SetChartOptions(0, chartShowArrows|chartShowDates);        
+       
+SetBarFillColor(IIf(C>O, UpColor, IIf(C<=O, DownColor, colorLightGrey)));        
+
+Plot(C, "Price", IIf(C>O, WickUpColor, IIf(C<=O, WickDownColor, colorLightGrey)), styleCandle | styleNoTitle);
+
+_N(Title = "Supertrend: " + 
+	StrFormat("{{INTERVAL}} {{DATE}} \nOpen= %g, HiGH= %g, LoW= %g, Close= %g (%.1f%%) {{VALUES}}", 
+		O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));         
+        
+function calculateSupertrend(Period, Multiplier)
+{
+	ATR_Val=ATR(Period);
+
+	UpperBand=LowerBand=final_UpperBand=final_LowerBand=SuperTrend=0;
+	
+	for( i = Period; i < BarCount; i++ )
+	{
+		UpperBand[i]=((High[i] + Low[i])/2) + Multiplier*ATR_Val[i];
+		LowerBand[i]=((High[i] + Low[i])/2) - Multiplier*ATR_Val[i];
+		final_UpperBand[i] = IIf( ((UpperBand[i]<final_UpperBand[i-1]) OR (Close[i-1]>final_UpperBand[i-1])), (UpperBand[i]), final_UpperBand[i-1]);
+		final_LowerBand[i] = Iif( ((LowerBand[i]>final_LowerBand[i-1]) OR (Close[i-1]<final_LowerBand[i-1])), (LowerBand[i]), final_LowerBand[i-1]);
+			
+		SuperTrend[i] = IIf(((SuperTrend[i-1]==final_UpperBand[i-1]) AND (Close[i]<=final_UpperBand[i])),final_UpperBand[i],
+		IIf(((SuperTrend[i-1]==final_UpperBand[i-1]) AND (Close[i]>=final_UpperBand[i])),final_LowerBand[i],
+		IIf(((SuperTrend[i-1]==final_LowerBand[i-1]) AND (Close[i]>=final_LowerBand[i])),final_LowerBand[i],
+		IIf(((SuperTrend[i-1]==final_LowerBand[i-1]) AND (Close[i]<=final_LowerBand[i])),final_UpperBand[i],0))));
+
+	}
+	
+	Plot( SuperTrend, "SuperTrend", IIf( SuperTrend>Close, ResistanceColor, SupportColor), Style);
+	Return SuperTrend;  
+}
+
+SuperTrend = calculateSupertrend(Period,Multiplier);
+
+// This will tell us if the line is green or red (i.e. buy or sell)
+// Close > Supertrend == BUY Signal otherwise SELL
+SupertrendSignal = Close > SuperTrend;
+
+// This will tell us whenever there is a change in signal
+SignalChanged = SupertrendSignal != Ref(SupertrendSignal, -1);
+
+// If supertrend is buy and signal just changed
+Buy = SupertrendSignal AND SignalChanged;
+
+// If supertrend is sell and signal just changed
+Sell = (!SupertrendSignal) AND SignalChanged;
+
+// Additional safety, remove excessive signals
+Buy=ExRem(Buy,Sell);
+Sell=ExRem(Sell,Buy);
+
+/******************************************************************** 
+* SECTION 2 - END
+********************************************************************/
+
+/******************************************************************** 
+* SECTION 3 - BEGIN
+* This section contains your code for placing orders.
+********************************************************************/
+/*
+* shouldSquareOff() returns 1 when current time goes beyond square off time.
+*/
+if(shouldSquareOff()) {
+	if(!isSquareOffRequestSent()) {
+		// Square off position, as current time has gone passed square off time
+		// Assuming the position is MIS
+		squareOffPosition(AT_ACCOUNT, "DAY", "MIS", AT_EXCHANGE, getSymbol(Name()));
+		
+		saveStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY, 1);
+	}
+}
+else {
+
+	/* 
+	* If control reaches here, it means we are before square off time,
+	* so we can place orders.
+	*/
+	if ( LastValue(Buy) == True )
+	{
+			/* 
+			* We do some calculation to double the quantity, for all orders except first.
+			* This is done so that we can re-enter a position. Following this approach
+			* we can avoid using Short & Cover.
+			*/
+			quantity = calcDoubleQuantity(AT_ACCOUNT, getSymbol(Name()), getQuantity(Name()));
+
+			placeOrder(AT_ACCOUNT, AT_EXCHANGE, getSymbol(Name()), "BUY", "MARKET", 
+				AT_PRODUCT_TYPE, quantity, buyPrice, defaultTriggerPrice(), True);
+	}
+
+	if ( LastValue(Sell) == True )
+	{	
+			/* 
+			* We do some calculation to double the quantity, for all orders except first.
+			* This is done so that we can re-enter a position. Following this approach
+			* we can avoid using Short & Cover.
+			*/
+			quantity = calcDoubleQuantity(AT_ACCOUNT, getSymbol(Name()), getQuantity(Name()));
+			
+			placeOrder(AT_ACCOUNT, AT_EXCHANGE, getSymbol(Name()), "SELL", "MARKET", 
+				AT_PRODUCT_TYPE, quantity, sellPrice, defaultTriggerPrice(), True);
+	}
+	
+}
+/******************************************************************** 
+* SECTION 3 - END
+********************************************************************/
+
+_SECTION_END();
