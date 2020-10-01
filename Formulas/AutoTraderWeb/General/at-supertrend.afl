@@ -65,6 +65,29 @@ function shouldSquareOff() {
 
 _SECTION_BEGIN("Supertrend");         
 
+// Keep it ON to avoid short lived signals (which come and disapper).
+// Some signals arrive when the bar or candle is being built, 
+// but disapper by the time bar or candle it complete.
+// In such cases, user will NOT see a signal on the bar but orders will be placed, 
+// because orders would normally be sent as soon as a signal comes.
+// Setting this flag ON avoids this problem, as the system will wait for 
+// the next bar or candle to place an order.
+PLACE_ORDER_ON_NEXT_BAR = ParamToggle("Place order on next bar", "OFF|ON");
+
+PREVIOUS_BAR_END_TIME = "PREVIOUS_BAR_END_TIME";
+
+function isNewBar() {
+	result = True;
+
+	if(PLACE_ORDER_ON_NEXT_BAR) {
+		prevEndTime = readStaticVariable(AT_ACCOUNT, PREVIOUS_BAR_END_TIME);
+		currEndTime = Status( "lastbarend" );
+		result = (prevEndTime > 0 && prevEndTime != currEndTime);
+	}
+	
+	return result;
+}
+
 // SuperTrend parameters
 Multiplier = Param("Period", 7, 1, 50 );
 Period = Param("Multiplier", 3, 1, 10 );
@@ -158,34 +181,51 @@ if(shouldSquareOff()) {
 }
 else {
 
+	BuySignal = Buy;
+	SellSignal = Sell;
+
+	if(PLACE_ORDER_ON_NEXT_BAR) {
+
+		// Special handling when place order on next candle is ON
+		
+		if(LastValue(Buy) == True || LastValue(Sell) == True) {
+			/* Save time of previous candle when we get signal */
+			saveStaticVariable(AT_ACCOUNT, PREVIOUS_BAR_END_TIME, Status( "lastbarend" ));
+		}
+		
+		// Signal on previous Bar
+		BuySignal = Ref(Buy, -1);
+		SellSignal = Ref(Sell, -1);		
+	}
+
 	/* 
 	* If control reaches here, it means we are before square off time,
 	* so we can place orders.
 	*/
-	if ( LastValue(Buy) == True )
+	if ( LastValue(BuySignal) == True && isNewBar() )
 	{
-			/* 
-			* We do some calculation to double the quantity, for all orders except first.
-			* This is done so that we can re-enter a position. Following this approach
-			* we can avoid using Short & Cover.
-			*/
-			quantity = calcDoubleQuantity(AT_ACCOUNT, AT_SYMBOL, AT_QUANTITY);
+		/* 
+		* We do some calculation to double the quantity, for all orders except first.
+		* This is done so that we can re-enter a position. Following this approach
+		* we can avoid using Short & Cover.
+		*/
+		quantity = calcDoubleQuantity(AT_ACCOUNT, AT_SYMBOL, AT_QUANTITY);
 
-			placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
-				AT_PRODUCT_TYPE, quantity, buyPrice, defaultTriggerPrice(), True);
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
+			AT_PRODUCT_TYPE, quantity, buyPrice, defaultTriggerPrice(), True);
 	}
 
-	if ( LastValue(Sell) == True )
+	if ( LastValue(SellSignal) == True && isNewBar() )
 	{	
-			/* 
-			* We do some calculation to double the quantity, for all orders except first.
-			* This is done so that we can re-enter a position. Following this approach
-			* we can avoid using Short & Cover.
-			*/
-			quantity = calcDoubleQuantity(AT_ACCOUNT, AT_SYMBOL, AT_QUANTITY);
-			
-			placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
-				AT_PRODUCT_TYPE, quantity, sellPrice, defaultTriggerPrice(), True);
+		/* 
+		* We do some calculation to double the quantity, for all orders except first.
+		* This is done so that we can re-enter a position. Following this approach
+		* we can avoid using Short & Cover.
+		*/
+		quantity = calcDoubleQuantity(AT_ACCOUNT, AT_SYMBOL, AT_QUANTITY);
+		
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
+			AT_PRODUCT_TYPE, quantity, sellPrice, defaultTriggerPrice(), True);
 	}
 	
 }
