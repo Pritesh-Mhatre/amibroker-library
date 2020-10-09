@@ -1,0 +1,23 @@
+/************************************************
+* Functions that help with square-off.
+*
+* Author: Pritesh Mhatre
+************************************************/
+
+_SECTION_BEGIN("Square-off");
+
+// Square off parameters
+AT_SQUARE_OFF_FLAG = ParamToggle("Intraday Auto Square-off", "OFF|ON", 0);
+AT_SQUARE_OFF_TIME = ParamTime( "Intraday Square-off Time", "15:00:00"); 
+AT_SQUARE_OFF_STATUS_KEY = "SQUARE_OFF_STATUS";
+
+function isSquareOffRequestSent() {
+	soffStatus = readStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY);
+	return soffStatus > 0;
+}
+
+function shouldSquareOff() {
+	return ((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME));
+}
+
+_SECTION_END();

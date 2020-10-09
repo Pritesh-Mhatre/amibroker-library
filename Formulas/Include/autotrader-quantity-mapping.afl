@@ -1,0 +1,36 @@
+/************************************************
+* Helps to use different quantity per symbol in scanner.
+*
+* Author: Stocks Developer
+************************************************/
+
+_SECTION_BEGIN("Quantity-Mapping");
+
+// A flag to indicate whether quantity must be loaded from a quantity file
+// This allows you to use different quantity per scanner symbol
+AT_USE_QUANTITY_MAPPING = ParamToggle("Use quantity mapping file", "OFF|ON", 0);
+AT_QUANTITY_MAPPING_FILE = ParamStr("Quantity maping file", "C:\\quantity-mapping.csv");
+
+/*
+* Looks for a quantity in the mapping file. 
+* Allows you to map different quantity for each scanner symbol.
+* On error, it will return quantity set in chart parameters.
+*/
+function getQuantity(datafeedSymbol) {
+	quantity = AT_QUANTITY;
+	
+	if(AT_USE_QUANTITY_MAPPING) {
+		fileQuantity = fileReadCsvColumnByRowId(AT_QUANTITY_MAPPING_FILE, datafeedSymbol, 1, 2);
+		if(fileQuantity == "") {
+			_TRACE("Could not find quantity for [" + datafeedSymbol + "].");
+			_TRACE("Please make sure following line exists in the file [" + AT_QUANTITY_MAPPING_FILE + "].");
+			_TRACE(datafeedSymbol + ",<SYMBOL_QUANTITY>");			
+		} else {
+			quantity = StrToNum(fileQuantity);
+		}
+	}
+
+	return quantity;
+}
+
+_SECTION_END();

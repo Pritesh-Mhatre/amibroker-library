@@ -15,6 +15,7 @@
 ********************************************************************/
 
 #include <autotrader.afl>
+#include <autotrader-square-off.afl>
 
 /******************************************************************** 
 * SECTION 1 - END
@@ -38,30 +39,6 @@
 * SECTION 2 - BEGIN
 * This section contains your strategy afl code.
 ********************************************************************/
-
-_SECTION_BEGIN("Square-off");
-
-// Square off parameters
-AT_SQUARE_OFF_FLAG = ParamToggle("Intraday Auto Square-off", "OFF|ON", 0);
-AT_SQUARE_OFF_TIME = ParamTime( "Intraday Square-off Time", "15:00:00"); 
-AT_SQUARE_OFF_STATUS_KEY = "SQUARE_OFF_STATUS";
-
-_SECTION_END();
-
-function isSquareOffRequestSent() {
-	soffStatus = readStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY);
-	return soffStatus > 0;
-}
-
-function shouldSquareOff() {
-	result = False;
-	
-	if((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME)) {
-		result = True;
-	}
-	
-	return result;
-}
 
 _SECTION_BEGIN("Supertrend");         
 

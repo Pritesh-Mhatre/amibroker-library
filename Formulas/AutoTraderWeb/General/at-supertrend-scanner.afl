@@ -31,6 +31,9 @@
 ********************************************************************/
 
 #include <autotrader.afl>
+#include <autotrader-square-off.afl>
+#include <autotrader-symbol-mapping.afl>
+#include <autotrader-quantity-mapping.afl>
 
 /******************************************************************** 
 * SECTION 1 - END
@@ -54,89 +57,6 @@
 * SECTION 2 - BEGIN
 * This section contains your strategy afl code.
 ********************************************************************/
-
-_SECTION_BEGIN("Files");
-
-// A flag to indicate whether symbols must be loaded from a mapping file
-AT_USE_SYMBOL_MAPPING = ParamToggle("Use symbol mapping file", "OFF|ON", 0);
-AT_SYMBOL_MAPPING_FILE = ParamStr("Symbol maping file", "C:\\symbol-mapping.csv");
-
-/*
-* Looks for a AutoTrader Web's symbol in the mapping file. 
-* Allows you to map datafeed provider's symbols to AutoTrader Web's symbols.
-* On error, it will return same symbol that was passed to it.
-*/
-function getSymbol(datafeedSymbol) {
-	atWebSymbol = datafeedSymbol;
-	
-	if(AT_USE_SYMBOL_MAPPING) {
-		fileSymbol = fileReadCsvColumnByRowId(AT_SYMBOL_MAPPING_FILE, datafeedSymbol, 1, 2);
-		if(fileSymbol == "") {
-			_TRACE("Could not find AutoTrader Web's symbol for [" + datafeedSymbol + "].");
-			_TRACE("Please make sure following line exists in the file [" + AT_SYMBOL_MAPPING_FILE + "].");
-			_TRACE(datafeedSymbol + ",<AUTOTRADER_WEB_SYMBOL>");			
-		} else {
-			atWebSymbol = fileSymbol;
-		}
-	}
-
-	return atWebSymbol;
-}
-
-// A flag to indicate whether quantity must be loaded from a quantity file
-// This allows you to use different quantity per scanner symbol
-AT_USE_QUANTITY_MAPPING = ParamToggle("Use quantity mapping file", "OFF|ON", 0);
-AT_QUANTITY_MAPPING_FILE = ParamStr("Quantity maping file", "C:\\quantity-mapping.csv");
-
-/*
-* Looks for a quantity in the mapping file. 
-* Allows you to map different quantity for each scanner symbol.
-* On error, it will return quantity set in chart parameters.
-*/
-function getQuantity(datafeedSymbol) {
-	quantity = AT_QUANTITY;
-	
-	if(AT_USE_QUANTITY_MAPPING) {
-		fileQuantity = fileReadCsvColumnByRowId(AT_QUANTITY_MAPPING_FILE, datafeedSymbol, 1, 2);
-		if(fileQuantity == "") {
-			_TRACE("Could not find quantity for [" + datafeedSymbol + "].");
-			_TRACE("Please make sure following line exists in the file [" + AT_QUANTITY_MAPPING_FILE + "].");
-			_TRACE(datafeedSymbol + ",<SYMBOL_QUANTITY>");			
-		} else {
-			quantity = StrToNum(fileQuantity);
-		}
-	}
-
-	return quantity;
-}
-
-_SECTION_END();
-
-
-_SECTION_BEGIN("Square-off");
-
-// Square off parameters
-AT_SQUARE_OFF_FLAG = ParamToggle("Intraday Auto Square-off", "OFF|ON", 0);
-AT_SQUARE_OFF_TIME = ParamTime( "Intraday Square-off Time", "15:00:00"); 
-AT_SQUARE_OFF_STATUS_KEY = "SQUARE_OFF_STATUS";
-
-function isSquareOffRequestSent() {
-	soffStatus = readStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY);
-	return soffStatus > 0;
-}
-
-function shouldSquareOff() {
-	result = False;
-	
-	if((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME)) {
-		result = True;
-	}
-	
-	return result;
-}
-
-_SECTION_END();
-
 
 _SECTION_BEGIN("Supertrend");         
 

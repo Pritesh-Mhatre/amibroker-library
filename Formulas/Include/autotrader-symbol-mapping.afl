@@ -1,0 +1,36 @@
+/************************************************
+* Helps to map datafeed symbols to AutoTrader symbols.
+*
+* Author: Pritesh Mhatre
+************************************************/
+
+
+_SECTION_BEGIN("Symbol-Mapping");
+
+// A flag to indicate whether symbols must be loaded from a mapping file
+AT_USE_SYMBOL_MAPPING = ParamToggle("Use symbol mapping file", "OFF|ON", 0);
+AT_SYMBOL_MAPPING_FILE = ParamStr("Symbol maping file", "C:\\symbol-mapping.csv");
+
+/*
+* Looks for a AutoTrader Web's symbol in the mapping file. 
+* Allows you to map datafeed provider's symbols to AutoTrader Web's symbols.
+* On error, it will return same symbol that was passed to it.
+*/
+function getSymbol(datafeedSymbol) {
+	atWebSymbol = datafeedSymbol;
+	
+	if(AT_USE_SYMBOL_MAPPING) {
+		fileSymbol = fileReadCsvColumnByRowId(AT_SYMBOL_MAPPING_FILE, datafeedSymbol, 1, 2);
+		if(fileSymbol == "") {
+			_TRACE("Could not find AutoTrader Web's symbol for [" + datafeedSymbol + "].");
+			_TRACE("Please make sure following line exists in the file [" + AT_SYMBOL_MAPPING_FILE + "].");
+			_TRACE(datafeedSymbol + ",<AUTOTRADER_WEB_SYMBOL>");			
+		} else {
+			atWebSymbol = fileSymbol;
+		}
+	}
+
+	return atWebSymbol;
+}
+
+_SECTION_END();
