@@ -34,6 +34,7 @@
 #include <autotrader-square-off.afl>
 #include <autotrader-symbol-mapping.afl>
 #include <autotrader-quantity-mapping.afl>
+#include <autotrader-next-bar.afl>
 
 /******************************************************************** 
 * SECTION 1 - END
@@ -153,11 +154,28 @@ if(shouldSquareOff()) {
 }
 else {
 
+	BuySignal = Buy;
+	SellSignal = Sell;
+
+	if(AT_PLACE_ORDER_ON_NEXT_BAR) {
+
+		// Special handling when place order on next candle is ON
+		
+		if(LastValue(Buy) == True || LastValue(Sell) == True) {
+			/* Save time of previous candle when we get signal */
+			saveStaticVariable(AT_ACCOUNT, AT_PREVIOUS_BAR_END_TIME, Status( "lastbarend" ));
+		}
+		
+		// Signal on previous Bar
+		BuySignal = Ref(Buy, -1);
+		SellSignal = Ref(Sell, -1);		
+	}
+
 	/* 
 	* If control reaches here, it means we are before square off time,
 	* so we can place orders.
 	*/
-	if ( LastValue(Buy) == True )
+	if ( LastValue(Buy) == True && isNewBar() )
 	{
 			/* 
 			* We do some calculation to double the quantity, for all orders except first.
@@ -170,7 +188,7 @@ else {
 				AT_PRODUCT_TYPE, quantity, buyPrice, defaultTriggerPrice(), True);
 	}
 
-	if ( LastValue(Sell) == True )
+	if ( LastValue(Sell) == True && isNewBar() )
 	{	
 			/* 
 			* We do some calculation to double the quantity, for all orders except first.

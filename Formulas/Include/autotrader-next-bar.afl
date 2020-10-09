@@ -1,0 +1,32 @@
+/************************************************
+* Helper functions to place order on next Bar or Candle.
+*
+* Author: Stocks Developer
+************************************************/
+
+_SECTION_BEGIN("Next-Bar");
+
+// Keep it ON to avoid short lived signals (which come and disapper).
+// Some signals arrive when the bar or candle is being built, 
+// but disapper by the time bar or candle it complete.
+// In such cases, user will NOT see a signal on the bar but orders will be placed, 
+// because orders would normally be sent as soon as a signal comes.
+// Setting this flag ON avoids this problem, as the system will wait for 
+// the next bar or candle to place an order.
+AT_AT_PLACE_ORDER_ON_NEXT_BAR = ParamToggle("Place order on next bar", "OFF|ON");
+
+AT_PREVIOUS_BAR_END_TIME = "AT_PREVIOUS_BAR_END_TIME";
+
+function isNewBar() {
+	result = True;
+
+	if(AT_AT_PLACE_ORDER_ON_NEXT_BAR) {
+		prevEndTime = readStaticVariable(AT_ACCOUNT, AT_PREVIOUS_BAR_END_TIME);
+		currEndTime = Status( "lastbarend" );
+		result = (prevEndTime > 0 && prevEndTime != currEndTime);
+	}
+	
+	return result;
+}
+
+_SECTION_END();

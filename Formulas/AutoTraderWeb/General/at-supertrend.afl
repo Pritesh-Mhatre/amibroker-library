@@ -16,6 +16,7 @@
 
 #include <autotrader.afl>
 #include <autotrader-square-off.afl>
+#include <autotrader-next-bar.afl>
 
 /******************************************************************** 
 * SECTION 1 - END
@@ -41,29 +42,6 @@
 ********************************************************************/
 
 _SECTION_BEGIN("Supertrend");         
-
-// Keep it ON to avoid short lived signals (which come and disapper).
-// Some signals arrive when the bar or candle is being built, 
-// but disapper by the time bar or candle it complete.
-// In such cases, user will NOT see a signal on the bar but orders will be placed, 
-// because orders would normally be sent as soon as a signal comes.
-// Setting this flag ON avoids this problem, as the system will wait for 
-// the next bar or candle to place an order.
-PLACE_ORDER_ON_NEXT_BAR = ParamToggle("Place order on next bar", "OFF|ON");
-
-PREVIOUS_BAR_END_TIME = "PREVIOUS_BAR_END_TIME";
-
-function isNewBar() {
-	result = True;
-
-	if(PLACE_ORDER_ON_NEXT_BAR) {
-		prevEndTime = readStaticVariable(AT_ACCOUNT, PREVIOUS_BAR_END_TIME);
-		currEndTime = Status( "lastbarend" );
-		result = (prevEndTime > 0 && prevEndTime != currEndTime);
-	}
-	
-	return result;
-}
 
 // SuperTrend parameters
 Multiplier = Param("Period", 7, 1, 50 );
@@ -161,13 +139,13 @@ else {
 	BuySignal = Buy;
 	SellSignal = Sell;
 
-	if(PLACE_ORDER_ON_NEXT_BAR) {
+	if(AT_PLACE_ORDER_ON_NEXT_BAR) {
 
 		// Special handling when place order on next candle is ON
 		
 		if(LastValue(Buy) == True || LastValue(Sell) == True) {
 			/* Save time of previous candle when we get signal */
-			saveStaticVariable(AT_ACCOUNT, PREVIOUS_BAR_END_TIME, Status( "lastbarend" ));
+			saveStaticVariable(AT_ACCOUNT, AT_PREVIOUS_BAR_END_TIME, Status( "lastbarend" ));
 		}
 		
 		// Signal on previous Bar
