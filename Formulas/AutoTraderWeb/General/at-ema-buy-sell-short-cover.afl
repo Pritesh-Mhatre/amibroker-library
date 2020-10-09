@@ -1,0 +1,197 @@
+/**
+* AmiBroker moving average crossover with square-off option. 
+* You need to set appropriate values in chart parameters.
+* 
+* User Guide: https://stocksdeveloper.in/documentation/index/
+* API Docs: https://stocksdeveloper.in/documentation/api/
+* Symbol Search: https://stocksdeveloper.in:9013/instrument
+* 
+* Author - Stocks Developer
+*/
+
+/******************************************************************** 
+* SECTION 1 - BEGIN
+* This section contains all includes & should be at the top of your strategy afl.
+********************************************************************/
+
+#include <autotrader.afl>
+#include <autotrader-square-off.afl>
+#include <autotrader-next-bar.afl>
+
+/******************************************************************** 
+* SECTION 1 - END
+********************************************************************/
+
+
+/*******************************************************************
+* Moving average crossover with auto square off.
+* This strategy works well with market orders.
+* This strategy makes use of Buy, Sell, Short & Cover signals.
+*
+* NOTE: It is recommended to start with a blank chart.
+********************************************************************/
+
+/*******************************************************************
+* How to see strategy logs in AMIBroker?
+* 1. Enable log window from amibroker menu (Window -> Log)
+* 2. You will see log window at the bottom.
+* 3. Go to "Trace" tab (all strategy logs are printed here).
+********************************************************************/
+
+
+/******************************************************************** 
+* SECTION 2 - BEGIN
+* This section contains your strategy afl code.
+********************************************************************/
+
+_SECTION_BEGIN("Moving Average: Buy-Sell-Short-Cover");
+
+// Moving Average
+SHORT_MA_PERIOD = Param("Short term moving average period", 20, 1, 200, 2);
+LONG_MA_PERIOD = Param("Long term moving average period", 40, 1, 200, 2);
+
+// Refresh even when minimized, see below link
+// https://forum.amibroker.com/t/program-pauses-when-amibroker-minimized/4145/2
+RefreshPeriod = Param( "Timed Refresh Period", 5, 1, 300);
+RequestTimedRefresh(RefreshPeriod, False);
+
+ORDER_COUNT = "ORDER_COUNT";
+LAST_SIGNAL = "LAST_SIGNAL";
+
+function getPlacedOrderCount() {
+	return Nz(atStaticVarGet(ORDER_COUNT));
+}
+
+function incrementPlacedOrderCount(lastOrderId) {
+	if(lastOrderId != "") {
+		atStaticVarSet(ORDER_COUNT, getPlacedOrderCount() + 1);
+	}
+}
+
+function getPreviousSignal() {
+	return atStaticVarGetText(LAST_SIGNAL);
+}
+
+function setPreviousSignal(signalType) {
+	return atStaticVarSetText(LAST_SIGNAL, signalType);
+}
+
+/* Exponential Moving averages */
+EMA1 = EMA( C, SHORT_MA_PERIOD); 
+EMA2 = EMA( C, LONG_MA_PERIOD);
+
+/* Buy and Sell Condition */
+Buy = Cross(EMA1,EMA2);
+Sell = Cross(EMA2,EMA1);
+
+/* Remove excess signals */
+Buy = ExRem(Buy,Sell);
+Sell = ExRem(Sell,Buy);
+
+/* You can add your own conditions for Short & Cover */
+Short = Sell;
+Cover = Buy;
+
+/* Prices when Buy, Sell, Short, Cover condition is true  */
+//buyPrice = ValueWhen(Buy,C);
+//sellPrice = ValueWhen(Sell,C);
+
+/* We use live prices here, as ValueWhen function gives negative price sometimes */
+/* You can use a different price as well */
+buyPrice = LastValue(C);
+sellPrice = LastValue(C);
+shortPrice = LastValue(C);
+coverPrice = LastValue(C);
+
+/* Plot Buy and Sell Signal Arrows */
+shape = Buy * shapeUpArrow + Sell * shapeDownArrow;
+PlotShapes( shape, IIf( Buy, colorGreen, colorRed ), 0, IIf( Buy, Low, High ) );
+GraphXSpace = 5;
+
+/* Plot EMA lines and Candles */
+Plot(EMA1,"EMA", colorRed);
+Plot(EMA2,"EMA2", colorGreen);
+Plot(C, "Close", colorRed, styleCandle);
+
+
+/******************************************************************** 
+* SECTION 2 - END
+********************************************************************/
+
+
+/******************************************************************** 
+* SECTION 3 - BEGIN
+* This section contains your code for placing orders.
+********************************************************************/
+
+/*
+* shouldSquareOff() returns True, when current time goes beyond square off time.
+*/
+if(shouldSquareOff()) {
+	if(!isSquareOffRequestSent()) {
+		// Square off position, as current time has gone passed square off time
+		// Assuming the position is MIS
+		squareOffPosition(AT_ACCOUNT, "DAY", "MIS", AT_EXCHANGE, AT_SYMBOL);
+		
+		saveStaticVariable(AT_ACCOUNT, AT_SQUARE_OFF_STATUS_KEY, 1);
+	}
+}
+else {
+
+	BuySignal = Buy;
+	SellSignal = Sell;
+	ShortSignal = Short;
+	CoverSignal = Cover;
+
+	if(AT_PLACE_ORDER_ON_NEXT_BAR) {
+
+		// Special handling when place order on next candle is ON
+		
+		if(LastValue(Buy) == True || LastValue(Sell) == True ||
+			LastValue(Short) == True || LastValue(Cover) == True) {
+			/* Save time of previous candle when we get signal */
+			saveStaticVariable(AT_ACCOUNT, AT_PREVIOUS_BAR_END_TIME, Status( "lastbarend" ));
+		}
+		
+		// Signal on previous Bar
+		BuySignal = Ref(Buy, -1);
+		SellSignal = Ref(Sell, -1);
+		ShortSignal = Ref(Short, -1);
+		CoverSignal = Ref(Cover, -1);
+	}
+
+	/* 
+	* If control reaches here, it means we are before square off time,
+	* so we can place orders.
+	*/
+	if ( LastValue(BuySignal) == True && getPreviousSignal() != "COVER" && isNewBar() )
+	{
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
+			AT_PRODUCT_TYPE, AT_QUANTITY, buyPrice, defaultTriggerPrice(), True);
+	}
+	
+	if ( LastValue(SellSignal) == True && orderCount > 1 && 
+		getPreviousSignal() != "SHORT" && isNewBar() )
+	{	
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
+			AT_PRODUCT_TYPE, AT_QUANTITY, sellPrice, defaultTriggerPrice(), True);
+	}
+
+	if ( LastValue(ShortSignal) == True && isNewBar() )
+	{
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SHORT", "MARKET", 
+			AT_PRODUCT_TYPE, AT_QUANTITY, buyPrice, defaultTriggerPrice(), True);
+	}
+	
+	if ( LastValue(CoverSignal) == True && orderCount > 1 && isNewBar() )
+	{	
+		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "COVER", "MARKET", 
+			AT_PRODUCT_TYPE, AT_QUANTITY, sellPrice, defaultTriggerPrice(), True);
+	}
+}
+
+/******************************************************************** 
+* SECTION 3 - END
+********************************************************************/
+
+_SECTION_END();
