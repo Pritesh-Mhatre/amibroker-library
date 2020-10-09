@@ -166,27 +166,35 @@ else {
 	*/
 	if ( LastValue(BuySignal) == True && getPreviousSignal() != "COVER" && isNewBar() )
 	{
-		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
+		orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
 			AT_PRODUCT_TYPE, AT_QUANTITY, buyPrice, defaultTriggerPrice(), True);
+		incrementPlacedOrderCount(orderId);
+		setPreviousSignal("BUY");
 	}
 	
 	if ( LastValue(SellSignal) == True && orderCount > 1 && 
 		getPreviousSignal() != "SHORT" && isNewBar() )
 	{	
-		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
+		orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
 			AT_PRODUCT_TYPE, AT_QUANTITY, sellPrice, defaultTriggerPrice(), True);
+		incrementPlacedOrderCount(orderId);
+		setPreviousSignal("SELL");
 	}
 
 	if ( LastValue(ShortSignal) == True && isNewBar() )
 	{
-		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SHORT", "MARKET", 
+		orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SHORT", "MARKET", 
 			AT_PRODUCT_TYPE, AT_QUANTITY, buyPrice, defaultTriggerPrice(), True);
+		incrementPlacedOrderCount(orderId);
+		setPreviousSignal("SHORT");
 	}
 	
 	if ( LastValue(CoverSignal) == True && orderCount > 1 && isNewBar() )
 	{	
-		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "COVER", "MARKET", 
+		orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "COVER", "MARKET", 
 			AT_PRODUCT_TYPE, AT_QUANTITY, sellPrice, defaultTriggerPrice(), True);
+		incrementPlacedOrderCount(orderId);
+		setPreviousSignal("COVER");
 	}
 }
 
