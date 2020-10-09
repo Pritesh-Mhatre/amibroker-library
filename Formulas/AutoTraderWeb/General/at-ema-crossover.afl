@@ -68,9 +68,9 @@ Sell = Cross(EMA2,EMA1);
 Buy = ExRem(Buy,Sell);
 Sell = ExRem(Sell,Buy);
 
-/* Instead of using Short & Cover; we will double the quantity */
-//Short = Sell;
-//Cover = Buy;
+// This is only added for backtesting
+Short=Sell;
+Cover=Buy;
 
 /* Prices when Buy, Sell, Short, Cover condition is true  */
 //buyPrice = ValueWhen(Buy,C);

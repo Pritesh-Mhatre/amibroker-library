@@ -132,6 +132,10 @@ Sell = (!SupertrendSignal) AND SignalChanged;
 Buy=ExRem(Buy,Sell);
 Sell=ExRem(Sell,Buy);
 
+// This is only added for backtesting
+Short=Sell;
+Cover=Buy;
+
 /******************************************************************** 
 * SECTION 2 - END
 ********************************************************************/
