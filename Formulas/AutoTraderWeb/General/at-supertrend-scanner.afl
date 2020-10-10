@@ -43,6 +43,12 @@
 /*******************************************************************
 * SuperTrend indicator based automated trading afl example.
 * 
+* There are many configurations available, please see chart parameters:
+* - Automated time based square-off
+* - Ability to place order on next bar or candle
+* - Ability to map datafeed symbol to API symbol
+* - Ability to use different quantity per symbol
+*
 * NOTE: It is recommended to start with a blank chart.
 ********************************************************************/
 

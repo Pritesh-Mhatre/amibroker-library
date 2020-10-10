@@ -28,6 +28,10 @@
 * This strategy works well with market orders.
 * This strategy makes use of Buy, Sell, Short & Cover signals.
 *
+* There are many configurations available, please see chart parameters:
+* - Automated time based square-off
+* - Ability to place order on next bar or candle
+*
 * NOTE: It is recommended to start with a blank chart.
 ********************************************************************/
 
