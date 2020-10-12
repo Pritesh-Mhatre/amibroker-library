@@ -1,5 +1,6 @@
 /**
 * AmiBroker moving average crossover with square-off option. 
+* This strategy makes use of Buy, Sell, Short & Cover signals.
 * You need to set appropriate values in chart parameters.
 * 
 * User Guide: https://stocksdeveloper.in/documentation/index/
@@ -63,21 +64,21 @@ ORDER_COUNT = "ORDER_COUNT";
 LAST_SIGNAL = "LAST_SIGNAL";
 
 function getPlacedOrderCount() {
-	return Nz(atStaticVarGet(ORDER_COUNT));
+	return Nz(readStaticVariable(AT_ACCOUNT, ORDER_COUNT));
 }
 
 function incrementPlacedOrderCount(lastOrderId) {
 	if(lastOrderId != "") {
-		atStaticVarSet(ORDER_COUNT, getPlacedOrderCount() + 1);
+		saveStaticVariable(AT_ACCOUNT, ORDER_COUNT, getPlacedOrderCount() + 1);
 	}
 }
 
 function getPreviousSignal() {
-	return atStaticVarGetText(LAST_SIGNAL);
+	return readStaticVariableText(AT_ACCOUNT, LAST_SIGNAL);
 }
 
 function setPreviousSignal(signalType) {
-	return atStaticVarSetText(LAST_SIGNAL, signalType);
+	return saveStaticVariableText(AT_ACCOUNT, LAST_SIGNAL, signalType);
 }
 
 /* Exponential Moving averages */
@@ -141,6 +142,8 @@ if(shouldSquareOff()) {
 	}
 }
 else {
+
+	orderCount = getPlacedOrderCount();
 
 	BuySignal = Buy;
 	SellSignal = Sell;
