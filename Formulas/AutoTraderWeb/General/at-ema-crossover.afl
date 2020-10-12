@@ -123,15 +123,7 @@ else {
 	SellSignal = Sell;
 
 	if(AT_PLACE_ORDER_ON_NEXT_BAR) {
-
-		// Special handling when place order on next candle is ON
-		
-		if(LastValue(Buy) == True || LastValue(Sell) == True) {
-			/* Save time of previous candle when we get signal */
-			saveStaticVariable(AT_ACCOUNT, AT_PREVIOUS_BAR_END_TIME, Status( "lastbarend" ));
-		}
-		
-		// Signal on previous Bar
+		// Use signals from previous bar (when place order on next bar is turned on)
 		BuySignal = Ref(Buy, -1);
 		SellSignal = Ref(Sell, -1);		
 	}
@@ -160,6 +152,19 @@ else {
 		placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
 			AT_PRODUCT_TYPE, quantity, sellPrice, defaultTriggerPrice(), True);
 	}
+
+	if(AT_PLACE_ORDER_ON_NEXT_BAR) {
+		// Special handling when place order on next bar or candle is ON
+		// This must be done after place order code
+		
+		if(LastValue(Buy) == True || LastValue(Sell) == True ||
+			LastValue(Short) == True || LastValue(Cover) == True) {
+			_TRACE("Saved = " + NumToStr(Status( "lastbarend" ), 1));
+			/* Save time of current bar when we get signal */
+			saveStaticVariable(AT_ACCOUNT, AT_PREVIOUS_BAR_END_TIME, Status( "lastbarend" ));
+		}
+	}
+	
 }
 
 /******************************************************************** 
