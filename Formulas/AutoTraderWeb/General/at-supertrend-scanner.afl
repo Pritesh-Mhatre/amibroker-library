@@ -177,7 +177,7 @@ else {
 	* If control reaches here, it means we are before square off time,
 	* so we can place orders.
 	*/
-	if ( LastValue(Buy) == True && isNewBar() )
+	if ( LastValue(BuySignal) == True && isNewBar() )
 	{
 			/* 
 			* We do some calculation to double the quantity, for all orders except first.
@@ -190,7 +190,7 @@ else {
 				AT_PRODUCT_TYPE, quantity, buyPrice, defaultTriggerPrice(), True);
 	}
 
-	if ( LastValue(Sell) == True && isNewBar() )
+	if ( LastValue(SellSignal) == True && isNewBar() )
 	{	
 			/* 
 			* We do some calculation to double the quantity, for all orders except first.
@@ -209,8 +209,7 @@ else {
 		
 		if(LastValue(Buy) == True || LastValue(Sell) == True ||
 			LastValue(Short) == True || LastValue(Cover) == True) {
-			_TRACE("Saved = " + NumToStr(Status( "lastbarend" ), 1));
-			/* Save time of current bar when we get signal */
+			// Save time of current bar when we get signal
 			saveStaticVariable(AT_ACCOUNT, AT_PREVIOUS_BAR_END_TIME, Status( "lastbarend" ));
 		}
 	}
