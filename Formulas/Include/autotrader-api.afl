@@ -529,6 +529,27 @@ function cancelOrExitOrder(account, id) {
 	cancelOrderChildren(account, id);
 }
 
+/*
+* Cancels all open orders for the given account. Returns true on success.
+*/
+function cancelAllOrders(account) {
+	if(AT_DEBUG) {
+		_TRACE("Cancelling all open orders for account: " + account);
+	}
+
+	csv = AT_CANCEL_ALL_ORDERS_CMD + AT_COMMA + account;
+	
+	written = fileWriteLine(COMMANDS_FILE, csv);
+	
+	if(written) {
+		_TRACE("Cancel all open orders request sent, account: " + account);
+	} else {
+		_TRACE("Cancel all open orders request failed, account: " + account);
+	}
+	
+	return written;
+}
+
 /*****************************************************************************/
 /************************ CANCEL/EXIT ORDER FUNCTIONS - END ***********************/
 /*****************************************************************************/
