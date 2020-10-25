@@ -37,3 +37,8 @@ function getPortfolioPositionsFile(pseudoAccount) {
 function getPortfolioMarginsFile(pseudoAccount) {
 	return OUTPUT_DIR + WIN_SEPARATOR + pseudoAccount + "-margins.csv";
 }
+
+/* Portfolio summary */
+function getPortfolioSummaryFile(pseudoAccount) {
+	return OUTPUT_DIR + WIN_SEPARATOR + pseudoAccount + "-summary.csv";
+}

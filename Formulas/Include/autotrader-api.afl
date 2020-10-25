@@ -1250,3 +1250,111 @@ function getMarginAvailableAll(pseudoAccount) {
 /*****************************************************************************/
 /************************ MARGIN DETAIL FUNCTIONS - END ***********************/
 /*****************************************************************************/
+
+
+/*****************************************************************************/
+/********************* PORTFOLIO SUMMARY FUNCTIONS - START ********************/
+/*****************************************************************************/
+
+/*
+* Reads summary file and returns a column value.
+*/
+function readSummaryColumn(pseudoAccount, columnIndex) {
+	filePath = getPortfolioSummaryFile(pseudoAccount);
+	return fileReadCsvColumn( filePath, 1, columnIndex );
+}
+
+/*
+* Retrieve portfolio M2M.
+*/
+function getPortfolioMtm(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 2));
+}
+
+/*
+* Retrieve portfolio PNL.
+*/
+function getPortfolioPnl(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 3));
+}
+
+/*
+* Retrieve portfolio position count.
+*/
+function getPortfolioPositionCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 4));
+}
+
+/*
+* Retrieve portfolio OPEN position count.
+*/
+function getPortfolioOpenPositionCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 5));
+}
+
+/*
+* Retrieve portfolio CLOSED position count.
+*/
+function getPortfolioClosedPositionCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 6));
+}
+
+/*
+* Retrieve portfolio open short quantity.
+*/
+function getPortfolioOpenShortQuantity(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 7));
+}
+
+/*
+* Retrieve portfolio open long quantity.
+*/
+function getPortfolioOpenLongQuantity(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 8));
+}
+
+/*
+* Retrieve portfolio order count.
+*/
+function getPortfolioOrderCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 9));
+}
+
+/*
+* Retrieve portfolio "open" order count.
+*/
+function getPortfolioOpenOrderCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 10));
+}
+
+/*
+* Retrieve portfolio "complete" order count.
+*/
+function getPortfolioCompleteOrderCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 11));
+}
+
+/*
+* Retrieve portfolio "cancelled" order count.
+*/
+function getPortfolioCancelledOrderCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 12));
+}
+
+/*
+* Retrieve portfolio "rejected" order count.
+*/
+function getPortfolioRejectedOrderCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 13));
+}
+
+/*
+* Retrieve portfolio "trigger pending" order count.
+*/
+function getPortfolioTriggerPendingOrderCount(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 14));
+}
+
+/*****************************************************************************/
+/********************** PORTFOLIO SUMMARY FUNCTIONS - END *********************/
+/*****************************************************************************/
