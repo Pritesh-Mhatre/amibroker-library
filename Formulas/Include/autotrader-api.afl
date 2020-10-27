@@ -1286,49 +1286,49 @@ function readSummaryColumn(pseudoAccount, columnIndex) {
 }
 
 /*
-* Retrieve portfolio M2M.
+* Retrieve portfolio M2M (Position category = DAY).
 */
 function getPortfolioMtm(pseudoAccount) {
 	return StrToNum(readSummaryColumn(pseudoAccount, 2));
 }
 
 /*
-* Retrieve portfolio PNL.
+* Retrieve portfolio PNL (Position category = DAY).
 */
 function getPortfolioPnl(pseudoAccount) {
 	return StrToNum(readSummaryColumn(pseudoAccount, 3));
 }
 
 /*
-* Retrieve portfolio position count.
+* Retrieve portfolio position count (Position category = DAY).
 */
 function getPortfolioPositionCount(pseudoAccount) {
 	return StrToNum(readSummaryColumn(pseudoAccount, 4));
 }
 
 /*
-* Retrieve portfolio OPEN position count.
+* Retrieve portfolio OPEN position count (Position category = DAY).
 */
 function getPortfolioOpenPositionCount(pseudoAccount) {
 	return StrToNum(readSummaryColumn(pseudoAccount, 5));
 }
 
 /*
-* Retrieve portfolio CLOSED position count.
+* Retrieve portfolio CLOSED position count (Position category = DAY).
 */
 function getPortfolioClosedPositionCount(pseudoAccount) {
 	return StrToNum(readSummaryColumn(pseudoAccount, 6));
 }
 
 /*
-* Retrieve portfolio open short quantity.
+* Retrieve portfolio open short quantity (Position category = DAY).
 */
 function getPortfolioOpenShortQuantity(pseudoAccount) {
 	return StrToNum(readSummaryColumn(pseudoAccount, 7));
 }
 
 /*
-* Retrieve portfolio open long quantity.
+* Retrieve portfolio open long quantity (Position category = DAY).
 */
 function getPortfolioOpenLongQuantity(pseudoAccount) {
 	return StrToNum(readSummaryColumn(pseudoAccount, 8));
@@ -1374,6 +1374,55 @@ function getPortfolioRejectedOrderCount(pseudoAccount) {
 */
 function getPortfolioTriggerPendingOrderCount(pseudoAccount) {
 	return StrToNum(readSummaryColumn(pseudoAccount, 14));
+}
+
+/*
+* Retrieve portfolio M2M (Position category = NET).
+*/
+function getPortfolioMtmNET(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 15));
+}
+
+/*
+* Retrieve portfolio PNL (Position category = NET).
+*/
+function getPortfolioPnlNET(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 16));
+}
+
+/*
+* Retrieve portfolio position count (Position category = NET).
+*/
+function getPortfolioPositionCountNET(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 17));
+}
+
+/*
+* Retrieve portfolio OPEN position count (Position category = NET).
+*/
+function getPortfolioOpenPositionCountNET(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 18));
+}
+
+/*
+* Retrieve portfolio CLOSED position count (Position category = NET).
+*/
+function getPortfolioClosedPositionCountNET(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 19));
+}
+
+/*
+* Retrieve portfolio open short quantity (Position category = NET).
+*/
+function getPortfolioOpenShortQuantityNET(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 20));
+}
+
+/*
+* Retrieve portfolio open long quantity (Position category = NET).
+*/
+function getPortfolioOpenLongQuantityNET(pseudoAccount) {
+	return StrToNum(readSummaryColumn(pseudoAccount, 21));
 }
 
 /*****************************************************************************/
