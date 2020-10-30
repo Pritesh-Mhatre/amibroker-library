@@ -8,15 +8,15 @@
 
 /* Import public amibroker libraries */
 
-#include<misc-util.afl>
-#include<text-util.afl>
-#include<file-util.afl>
-#include<conversion-util.afl>
+#include_once<misc-util.afl>
+#include_once<text-util.afl>
+#include_once<file-util.afl>
+#include_once<conversion-util.afl>
 
 /* Import AutoTrader specific amibroker libraries */
 
-#include<autotrader-pre-util.afl>
-#include<autotrader-ipc.afl>
-#include<autotrader-defaults.afl>
-#include<autotrader-api.afl>
-#include<autotrader-post-util.afl>
+#include_once<autotrader-pre-util.afl>
+#include_once<autotrader-ipc.afl>
+#include_once<autotrader-defaults.afl>
+#include_once<autotrader-api.afl>
+#include_once<autotrader-post-util.afl>
