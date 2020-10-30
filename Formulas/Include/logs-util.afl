@@ -1,0 +1,100 @@
+/************************************************
+* A logging library which writes logs to files.
+*
+* Author: Stocks Developer
+************************************************/
+
+#include_once<file-util.afl>
+#include_once<misc-util.afl>
+
+_SECTION_BEGIN("Logs");
+
+/* Trace is used for detailed logging */
+LOG_TRACE = "TRACE";
+
+/* Debug is used for logging that helps with debugging */
+LOG_DEBUG = "DEBUG";
+
+/* Info is used for normal informative logs */
+LOG_INFO = "INFO";
+
+/* Error is used to log errors */
+LOG_ERROR = "ERROR";
+
+LOGS_DIRECTORY_CHECK = "LOGS_DIRECTORY_CHECK";
+
+// A flag to indicate whether quantity must be loaded from a quantity file
+// This allows you to use different quantity per scanner symbol
+LOGS_SWITCH = ParamToggle("Enable logs", "OFF|ON", 1);
+
+// Make sure AmiBroker has read & write permission to this directory
+LOGS_DIRECTORY = ParamStr("Log files directory", "C:\\Program Files\\AmiBroker\\Logs");
+
+// Log file name
+LOGS_FILE_NAME = ParamStr("Log file name", Name());
+
+// Log file extension
+LOGS_FILE_EXTENSION = ParamList("Log file extension", "csv|txt|log");
+
+// Log file column separator
+LOGS_FILE_COLUMN_SEPARATOR = ParamStr("Log file column separator", ",");
+
+/**
+* Logs the given text to the file.
+*/
+function logInternal(category, logText) {
+
+	// Make directory
+	if(amiStaticVarGet(LOGS_DIRECTORY_CHECK) == False) {
+		_TRACE("Creating logs directory: " + LOGS_DIRECTORY);
+		fmkdir(LOGS_DIRECTORY);
+		amiStaticVarSet(LOGS_DIRECTORY_CHECK, True);
+	}
+
+	// File path
+	filePath = LOGS_DIRECTORY + "\\" + LOGS_FILE_NAME + "_" + Now(1) + "." + LOGS_FILE_EXTENSION;
+	
+	// Line
+	line = Now() + LOGS_FILE_COLUMN_SEPARATOR + category + LOGS_FILE_COLUMN_SEPARATOR + logText;
+
+	// log to the file
+	fileWriteLine(filePath, line);
+}
+
+/**
+* Logs a TRACE category statement.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Logs-Functions#logTrace
+*/
+function logTrace(logText) {
+	logInternal(LOG_TRACE, logText);
+}
+
+/**
+* Logs a DEBUG category statement.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Logs-Functions#logDebug
+*/
+function logDebug(logText) {
+	logInternal(LOG_DEBUG, logText);
+}
+
+/**
+* Logs a INFO category statement.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Logs-Functions#logInfo
+*/
+function logInfo(logText) {
+	logInternal(LOG_INFO, logText);
+}
+
+/**
+* Logs a ERROR category statement.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Logs-Functions#logError
+*/
+function logError(logText) {
+	logInternal(LOG_ERROR, logText);
+}
+
+_SECTION_END();
