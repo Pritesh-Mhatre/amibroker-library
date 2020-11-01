@@ -8,6 +8,7 @@
 
 #include_once<file-util.afl>
 #include_once<misc-util.afl>
+#include_once<text-util.afl>
 
 _SECTION_BEGIN("Logs");
 
@@ -23,14 +24,23 @@ LOG_INFO = "INFO";
 /* Error is used to log errors */
 LOG_ERROR = "ERROR";
 
+/* To indicate whether log directory was created or not */
 LOGS_DIRECTORY_CHECK = "LOGS_DIRECTORY_CHECK";
+
+/* AmiBroker Home */
+// Note this will differ from one system to another. 
+// As of AmiBroker version 6.0, there is no way to get the installation directory.
+AMIBROKER_HOME = "C:\\Program Files\\AmiBroker";
+
+/* Default logs directory */
+LOGS_DIRECTORY_DEFAULT = AMIBROKER_HOME + "\\" + "Logs";
 
 // A flag to indicate whether quantity must be loaded from a quantity file
 // This allows you to use different quantity per scanner symbol
 LOGS_SWITCH = ParamToggle("Enable logs", "OFF|ON", 1);
 
 // Make sure AmiBroker has read & write permission to this directory
-LOGS_DIRECTORY = ParamStr("Log files directory", "C:\\Program Files\\AmiBroker\\Logs");
+LOGS_DIRECTORY = ParamStr("Log files directory", LOGS_DIRECTORY_DEFAULT);
 
 // Log file name
 LOGS_FILE_NAME = ParamStr("Log file name", Name());
@@ -54,6 +64,14 @@ function logInternal(category, logText) {
 
 		// Make directory
 		if(amiStaticVarGet(LOGS_DIRECTORY_CHECK) == False) {
+
+			// Sometimes AmiBroker installation path is different to the default path, 
+			// hence this check is needed
+			if(strStartsWith(LOGS_DIRECTORY, AMIBROKER_HOME)) {
+				_TRACE("Making sure that AmiBroker Home exists: " + AMIBROKER_HOME);
+				fmkdir(AMIBROKER_HOME);
+			}
+		
 			_TRACE("Creating logs directory: " + LOGS_DIRECTORY);
 			fmkdir(LOGS_DIRECTORY);
 			amiStaticVarSet(LOGS_DIRECTORY_CHECK, True);
