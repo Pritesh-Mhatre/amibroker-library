@@ -12,6 +12,8 @@
 
 _SECTION_BEGIN("Logs");
 
+LOGS_DEFAULT_WRITE_RETRY_COUNT = 2;
+
 /* Trace is used for detailed logging */
 LOG_TRACE = "TRACE";
 
@@ -90,7 +92,8 @@ function logInternal(category, logText) {
 		line = Now() + LOGS_FILE_COLUMN_SEPARATOR + category + LOGS_FILE_COLUMN_SEPARATOR + logText;
 
 		// log to the file
-		fileWriteLine(filePath, line);
+		fileWriteLineAdvanced( filePath, FILE_DEFAULT_WRITE_MODE, 
+			FILE_DEFAULT_WRITE_SHARED_FLAG, LOGS_DEFAULT_WRITE_RETRY_COUNT, line);
 	
 	}
 }
