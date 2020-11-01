@@ -2,7 +2,7 @@
 *
 * AutoTrader automated trading API functions.
 * DO NOT MODIFY THIS FILE
-* Version: 1.0
+* Version: 2.0
 *
 ******************************************************************************/
 
@@ -172,14 +172,21 @@ function isDuplicateSignal(account, tradeType, symbol) {
 		if(difference < AT_AVOID_REPEAT_ORDER_DELAY AND 
 			lastTradeType == StrToUpper(tradeType)) {
 		
-			_TRACE("ERROR: Duplicate signal. Previous order = " 
-				+ lastTradeType + ", Current order = " + tradeType);
+			message = "ERROR: Duplicate signal. Previous order = " 
+				+ lastTradeType + ", Current order = " + tradeType;
+			logError(message);
+			_TRACE(message);
 			
 			if(AT_DEBUG) {
-				_TRACE("Last order time is = " + DateTimeToStr(time));
-				_TRACE("Difference of [" + difference + 
+				message = "Last order time is = " + DateTimeToStr(time);
+				logDebug(message);
+				_TRACE(message);
+				
+				message = "Difference of [" + difference + 
 					"] seconds is less than avoid duplicate order duration of ["
-					+ AT_AVOID_REPEAT_ORDER_DELAY + "] seconds.");
+					+ AT_AVOID_REPEAT_ORDER_DELAY + "] seconds.";
+				logDebug(message);
+				_TRACE(message);
 			}
 			
 			duplicate = True;
@@ -210,7 +217,9 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		price, triggerPrice, target, stoploss, trailingStoploss);
 		
 	if(AT_DEBUG) {
-		_TRACE("Placing order: " + orderStr);
+		message = "Placing order: " + orderStr;
+		logDebug(message);
+		_TRACE(message);
 	}	
 
 	proceed = TRUE;
@@ -219,7 +228,10 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		
 		// Perform duplicate signal check
 		if(isDuplicateSignal(account, tradeType, symbol)) {
-			_TRACE("Order failed validation: " + orderStr);
+			message = "Order failed validation: " + orderStr;
+			logError(message);
+			_TRACE(message);
+			
 			proceed = False;
 		}
 	}
@@ -288,7 +300,9 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 			comments;
 
 		if(AT_DEBUG) {
-			_TRACE("Order csv data: " + csv);
+			message = "Order csv data: " + csv;
+			logDebug(message);
+			_TRACE(message);
 		}	
 		
 		written = fileWriteLine(COMMANDS_FILE, csv);
@@ -296,12 +310,27 @@ function placeOrderAdvanced(variety, account, exchange, symbol,
 		if(written) {
 			saveLastOrderTradeType(account, symbol, tradeType);
 			saveLastOrderTime(account, symbol, Now(5));
-			_TRACE("Order placed: [" + orderStr + "], order id: " + orderId);
+			
+			message = "Order placed: [" + orderStr + "], order id: " + orderId;
+			logInfo(message);
+			_TRACE(message);
 		} else {
-			_TRACE("ERROR: Order placement failed: [" + orderStr + "]");
-			_TRACE("Either the commands file is missing or it is locked by another application.");
-			_TRACE("Kindly check the communication folder path in at-desktop settings.");
-			_TRACE("Communication path should be: " + IPC_DIR);
+			message = "ERROR: Order placement failed: [" + orderStr + "]";
+			logError(message);
+			_TRACE(message);
+		
+			message = "Either the commands file is missing or it is locked by another application.";
+			logError(message);
+			_TRACE(message);
+		
+			message = "Kindly check the communication folder path in at-desktop settings.";
+			logError(message);
+			_TRACE(message);
+		
+			message = "Communication path should be: " + IPC_DIR;
+			logError(message);
+			_TRACE(message);
+		
 			orderId = "";
 		}
 	}
@@ -398,6 +427,7 @@ procedure printOrderModification(account, orderId, orderType, quantity,
 		message += ("[Trigger Price = " + triggerPrice + "]");
 	}
 	
+	logDebug(message);
 	_TRACE(message);	
 }
 
@@ -429,7 +459,9 @@ function modifyOrder(account, orderId, orderType, quantity, price,
 		triggerPriceStr;
 	
 	if(AT_DEBUG) {
-		_TRACE("Sending order modify request: " + csv);
+		message = "Sending order modify request: " + csv;
+		logDebug(message);
+		_TRACE(message);
 	}
 		
 	written = fileWriteLine(COMMANDS_FILE, csv);
@@ -438,9 +470,13 @@ function modifyOrder(account, orderId, orderType, quantity, price,
 		triggerPrice);
 	
 	if(written) {
-		_TRACE("Order modify request sent. Command: " + csv);
+		message = "Order modify request sent. Command: " + csv;
+		logDebug(message);
+		_TRACE(message);
 	} else {
-		_TRACE("Order modify request failed. Command: " + csv);
+		message = "Order modify request failed. Command: " + csv;
+		logError(message);
+		_TRACE(message);
 	}
 	
 	return written;
@@ -468,7 +504,9 @@ function modifyOrderQuantity(account, orderId, quantity) {
 */
 function cancelOrder(account, id) {
 	if(AT_DEBUG) {
-		_TRACE("Cancelling order, order id: " + id);
+		message = "Cancelling order, order id: " + id;
+		logDebug(message);
+		_TRACE(message);
 	}
 
 	csv = AT_CANCEL_ORDER_CMD 		+ AT_COMMA +
@@ -478,9 +516,13 @@ function cancelOrder(account, id) {
 	written = fileWriteLine(COMMANDS_FILE, csv);
 	
 	if(written) {
-		_TRACE("Order cancel request sent, order id: " + id);
+		message = "Order cancel request sent, order id: " + id;
+		logDebug(message);
+		_TRACE(message);
 	} else {
-		_TRACE("Order cancel request failed, order id: " + id);
+		message = "Order cancel request failed, order id: " + id;
+		logError(message);
+		_TRACE(message);
 	}
 	
 	return written;
@@ -493,7 +535,9 @@ function cancelOrder(account, id) {
 */
 function cancelOrderChildren(account, id) {
 	if(AT_DEBUG) {
-		_TRACE("Inside cancelOrderChildren, order id: " + id);
+		message = "Inside cancelOrderChildren, order id: " + id;
+		logDebug(message);
+		_TRACE(message);
 	}
 
 	csv = AT_CANCEL_CHILD_ORDER_CMD 	+ AT_COMMA +
@@ -503,9 +547,13 @@ function cancelOrderChildren(account, id) {
 	written = fileWriteLine(COMMANDS_FILE, csv);
 	
 	if(written) {
-		_TRACE("Order cancel children request sent, order id: " + id);
+		message = "Order cancel children request sent, order id: " + id;
+		logDebug(message);
+		_TRACE(message);
 	} else {
-		_TRACE("Order cancel children request failed, order id: " + id);
+		message = "Order cancel children request failed, order id: " + id;
+		logError(message);
+		_TRACE(message);
 	}
 	
 	return written;
@@ -519,7 +567,9 @@ function cancelOrderChildren(account, id) {
 */
 function cancelOrExitOrder(account, id) {
 	if(AT_DEBUG) {
-		_TRACE("Inside cancelOrExitOrder, order id = " + id);
+		message = "Inside cancelOrExitOrder, order id = " + id;
+		logDebug(message);
+		_TRACE(message);
 	}
 
 	// Cancel the Bracket order if it is open
@@ -534,7 +584,9 @@ function cancelOrExitOrder(account, id) {
 */
 function cancelAllOrders(account) {
 	if(AT_DEBUG) {
-		_TRACE("Cancelling all open orders for account: " + account);
+		message = "Cancelling all open orders for account: " + account;
+		logDebug(message);
+		_TRACE(message);
 	}
 
 	csv = AT_CANCEL_ALL_ORDERS_CMD + AT_COMMA + account;
@@ -542,9 +594,13 @@ function cancelAllOrders(account) {
 	written = fileWriteLine(COMMANDS_FILE, csv);
 	
 	if(written) {
-		_TRACE("Cancel all open orders request sent, account: " + account);
+		message = "Cancel all open orders request sent, account: " + account;
+		logDebug(message);
+		_TRACE(message);
 	} else {
-		_TRACE("Cancel all open orders request failed, account: " + account);
+		message = "Cancel all open orders request failed, account: " + account;
+		logError(message);
+		_TRACE(message);
 	}
 	
 	return written;
@@ -578,7 +634,9 @@ function squareOffPosition(pseudoAccount, category, type,
 						independentSymbol;
 	
 	if(AT_DEBUG) {
-		_TRACE("Inside squareOffPosition, position: [" + positionStr + "]");
+		message = "Inside squareOffPosition, position: [" + positionStr + "]";
+		logDebug(message);
+		_TRACE(message);
 	}
 
 	csv = AT_SQUARE_OFF_POSITION 		+ AT_COMMA +
@@ -591,9 +649,13 @@ function squareOffPosition(pseudoAccount, category, type,
 	written = fileWriteLine(COMMANDS_FILE, csv);
 	
 	if(written) {
-		_TRACE("Square-off position request sent. Position: [" + positionStr + "]");
+		message = "Square-off position request sent. Position: [" + positionStr + "]";
+		logDebug(message);
+		_TRACE(message);
 	} else {
-		_TRACE("Square-off position request failed. Position: [" + positionStr + "]");
+		message = "Square-off position request failed. Position: [" + positionStr + "]";
+		logError(message);
+		_TRACE(message);
 	}
 	
 	return written;
@@ -612,7 +674,9 @@ function squareOffPortfolio(pseudoAccount, category) {
 						category;
 	
 	if(AT_DEBUG) {
-		_TRACE("Inside squareOffPortfolio, portfolio: [" + portfolioStr + "]");
+		message = "Inside squareOffPortfolio, portfolio: [" + portfolioStr + "]";
+		logDebug(message);
+		_TRACE(message);
 	}
 
 	csv = AT_SQUARE_OFF_PORTFOLIO 	+ AT_COMMA +
@@ -622,9 +686,13 @@ function squareOffPortfolio(pseudoAccount, category) {
 	written = fileWriteLine(COMMANDS_FILE, csv);
 	
 	if(written) {
-		_TRACE("Square-off portfolio request sent. Portfolio: [" + portfolioStr + "]");
+		message = "Square-off portfolio request sent. Portfolio: [" + portfolioStr + "]";
+		logDebug(message);
+		_TRACE(message);
 	} else {
-		_TRACE("Square-off portfolio request failed. Portfolio: [" + portfolioStr + "]");
+		message = "Square-off portfolio request failed. Portfolio: [" + portfolioStr + "]";
+		logError(message);
+		_TRACE(message);
 	}
 	
 	return written;
@@ -952,7 +1020,9 @@ function readPositionColumnInternal(pseudoAccount,
 	}
 	else
 	{
-	   _TRACE("ERROR: file can not be found " + filePath);
+		message = "ERROR: file can not be found " + filePath;
+		logError(message);
+		_TRACE(message);
 	}
 	
 	return result;

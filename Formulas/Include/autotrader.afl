@@ -12,6 +12,7 @@
 #include_once<text-util.afl>
 #include_once<file-util.afl>
 #include_once<conversion-util.afl>
+#include_once<logs-util.afl>
 
 /* Import AutoTrader specific amibroker libraries */
 
