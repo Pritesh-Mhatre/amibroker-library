@@ -219,38 +219,50 @@ else {
 			/* Check whether we have already placed profit order */
 			if(readStaticVariableText(AT_ACCOUNT, PROFIT_ORDER_KEY) == "") {				
 				entryPrice = getOrderAveragePrice(AT_ACCOUNT, entryOrderId);
-				_TRACE("Entry order is complete, placing profit order. Entry order price: " + entryPrice);
+				message = "Entry order is complete, placing profit order. Entry order price: " + entryPrice;
+				logInfo(message);
+				_TRACE(message);
 
 				if(entryPrice > 0) {
 					profitPrice = calculateProfitTarget(entryTradeType, entryPrice, PROFIT_PCT);
 
-					_TRACE("Profit order price = " + profitPrice);				
+					message = "Profit order price = " + profitPrice;
+					logInfo(message);
+					_TRACE(message);
 
 					orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, exitTradeType, "LIMIT", 
 						"INTRADAY", AT_QUANTITY, profitPrice, defaultTriggerPrice(), False);
 					
 					saveStaticVariableText(AT_ACCOUNT, PROFIT_ORDER_KEY, orderId);
 				} else {
-					_TRACE("Profit order skipped, as entry order price is zero.");				
+					message = "Profit order skipped, as entry order price is zero.";
+					logInfo(message);
+					_TRACE(message);					
 				}
 			}
 			
 			/* Check whether we have already placed stoploss order */
 			if(readStaticVariableText(AT_ACCOUNT, STOPLOSS_ORDER_KEY) == "") {
 				entryPrice = getOrderAveragePrice(AT_ACCOUNT, entryOrderId);
-				_TRACE("Entry order is complete, placing stoploss order. Entry order price: " + entryPrice);
+				message = "Entry order is complete, placing stoploss order. Entry order price: " + entryPrice;
+				logInfo(message);
+				_TRACE(message);
 
 				if(entryPrice > 0) {
 					triggerPrice = calculateStoplossTarget(entryTradeType, entryPrice, PROFIT_PCT);
 					
-					_TRACE("Stoploss order trigger price = " + triggerPrice);				
+					message = "Stoploss order trigger price = " + triggerPrice;
+					logInfo(message);
+					_TRACE(message);
 
 					orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, exitTradeType, "SL_MARKET", 
 						"INTRADAY", AT_QUANTITY, 0, triggerPrice, Flase);
 					
 					saveStaticVariableText(AT_ACCOUNT, STOPLOSS_ORDER_KEY, orderId);
 				} else {
-					_TRACE("Stoploss order skipped, as entry order price is zero.");				
+					message = "Stoploss order skipped, as entry order price is zero.";
+					logInfo(message);
+					_TRACE(message);
 				}
 			}
 		}	
@@ -268,7 +280,9 @@ else {
 	/* Cancel stoploss order if profit order is complete */
 	if(isOrderComplete(AT_ACCOUNT, profitOrderId)) {
 		if(isOrderOpen(AT_ACCOUNT, stoplossOrderId)) {
-			_TRACE("Profit order complete, cancelling stoploss order.");
+			message = "Profit order complete, cancelling stoploss order.";
+			logInfo(message);
+			_TRACE(message);
 			cancelOrder(AT_ACCOUNT, stoplossOrderId);
 		}
 	}
@@ -276,7 +290,9 @@ else {
 	/* Cancel profit order if stoploss order is complete */
 	if(isOrderComplete(AT_ACCOUNT, stoplossOrderId)) {
 		if(isOrderOpen(AT_ACCOUNT, profitOrderId)) {
-			_TRACE("Stoploss order complete, cancelling profit order.");
+			message = "Stoploss order complete, cancelling profit order.";
+			logInfo(message);
+			_TRACE(message);
 			cancelOrder(AT_ACCOUNT, profitOrderId);
 		}
 	}
