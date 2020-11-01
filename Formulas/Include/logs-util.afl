@@ -92,9 +92,12 @@ function logInternal(category, logText) {
 		line = Now() + LOGS_FILE_COLUMN_SEPARATOR + category + LOGS_FILE_COLUMN_SEPARATOR + logText;
 
 		// log to the file
-		fileWriteLineAdvanced( filePath, FILE_DEFAULT_WRITE_MODE, 
+		result = fileWriteLineAdvanced( filePath, FILE_DEFAULT_WRITE_MODE, 
 			FILE_DEFAULT_WRITE_SHARED_FLAG, LOGS_DEFAULT_WRITE_RETRY_COUNT, line);
 	
+		if(result == False) {
+			_TRACE("Could not write logs to: " + filePath);
+		}
 	}
 }
 
