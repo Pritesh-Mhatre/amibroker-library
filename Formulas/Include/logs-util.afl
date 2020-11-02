@@ -29,6 +29,9 @@ LOG_ERROR = "ERROR";
 /* To indicate whether log directory was created or not */
 LOGS_DIRECTORY_CHECK = "LOGS_DIRECTORY_CHECK";
 
+/* To indicate whether errors were observed in logging */
+LOGS_ERRORS_FOUND = "LOGS_ERRORS_FOUND";
+
 /* AmiBroker Home */
 // Note this will differ from one system to another. 
 // As of AmiBroker version 6.0, there is no way to get the installation directory.
@@ -62,7 +65,7 @@ LOGS_SCANNER_MODE = ParamToggle("Using in scanner or analysis window", "OFF|ON",
 */
 function logInternal(category, logText) {
 
-	if(LOGS_SWITCH) {
+	if(LOGS_SWITCH AND amiStaticVarGet(LOGS_ERRORS_FOUND) == False) {
 
 		// Make directory
 		if(amiStaticVarGet(LOGS_DIRECTORY_CHECK) == False) {
@@ -96,7 +99,13 @@ function logInternal(category, logText) {
 			FILE_DEFAULT_WRITE_SHARED_FLAG, LOGS_DEFAULT_WRITE_RETRY_COUNT, line);
 	
 		if(result == False) {
-			_TRACE("Could not write logs to: " + filePath);
+			_TRACE("ERROR: Could not write logs to: " + filePath);			
+			_TRACE("Please do ONE of the following changes:");
+			_TRACE("1. Please change the logs path OR");
+			_TRACE("2. Make sure current path exists and AmiBroker has write permission to it. ["  + LOGS_DIRECTORY + "]");
+			_TRACE("Logging has been disabled due to previous errors.");
+			
+			amiStaticVarSet(LOGS_ERRORS_FOUND, True);
 		}
 	}
 }
