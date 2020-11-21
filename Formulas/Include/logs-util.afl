@@ -89,7 +89,9 @@ function logInternal(category, logText) {
 		}
 
 		// File path
-		filePath = LOGS_DIRECTORY + "\\" + fileName + "_" + Now(1) + "." + LOGS_FILE_EXTENSION;
+		filePath = LOGS_DIRECTORY + "\\" + fileName + "_" 
+			+ Now(6) + "-" + Now(7)  + "-"+ Now(8) 
+			+ "." + LOGS_FILE_EXTENSION;
 		
 		// Line
 		line = Now() + LOGS_FILE_COLUMN_SEPARATOR + category + LOGS_FILE_COLUMN_SEPARATOR + logText;
