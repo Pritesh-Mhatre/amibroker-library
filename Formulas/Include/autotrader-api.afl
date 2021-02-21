@@ -2,7 +2,7 @@
 *
 * AutoTrader automated trading API functions.
 * DO NOT MODIFY THIS FILE
-* Version: 2.0
+* Version: 3.0
 *
 ******************************************************************************/
 
@@ -1336,6 +1336,216 @@ function getMarginUtilizedAll(pseudoAccount) {
 */
 function getMarginAvailableAll(pseudoAccount) {
 	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 6));
+}
+
+/*
+* Retrieve margin total for equity category.
+*/
+function getMarginTotalEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 9));
+}
+
+/*
+* Retrieve margin total for commodity category.
+*/
+function getMarginTotalCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 9));
+}
+
+/*
+* Retrieve margin total for entire account.
+*/
+function getMarginTotalAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 9));
+}
+
+/*
+* Retrieve margin net for equity category.
+*/
+function getMarginNetEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 10));
+}
+
+/*
+* Retrieve margin net for commodity category.
+*/
+function getMarginNetCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 10));
+}
+
+/*
+* Retrieve margin net for entire account.
+*/
+function getMarginNetAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 10));
+}
+
+/*
+* Retrieve margin span for equity category.
+*/
+function getMarginSpanEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 11));
+}
+
+/*
+* Retrieve margin span for commodity category.
+*/
+function getMarginSpanCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 11));
+}
+
+/*
+* Retrieve margin span for entire account.
+*/
+function getMarginSpanAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 11));
+}
+
+/*
+* Retrieve margin exposure for equity category.
+*/
+function getMarginExposureEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 12));
+}
+
+/*
+* Retrieve margin exposure for commodity category.
+*/
+function getMarginExposureCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 12));
+}
+
+/*
+* Retrieve margin exposure for entire account.
+*/
+function getMarginExposureAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 12));
+}
+
+/*
+* Retrieve margin collateral for equity category.
+*/
+function getMarginCollateralEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 13));
+}
+
+/*
+* Retrieve margin collateral for commodity category.
+*/
+function getMarginCollateralCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 13));
+}
+
+/*
+* Retrieve margin collateral for entire account.
+*/
+function getMarginCollateralAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 13));
+}
+
+/*
+* Retrieve margin payin for equity category.
+*/
+function getMarginPayinEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 14));
+}
+
+/*
+* Retrieve margin payin for commodity category.
+*/
+function getMarginPayinCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 14));
+}
+
+/*
+* Retrieve margin payin for entire account.
+*/
+function getMarginPayinAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 14));
+}
+
+/*
+* Retrieve margin payout for equity category.
+*/
+function getMarginPayoutEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 15));
+}
+
+/*
+* Retrieve margin payout for commodity category.
+*/
+function getMarginPayoutCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 15));
+}
+
+/*
+* Retrieve margin payout for entire account.
+*/
+function getMarginPayoutAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 15));
+}
+
+/*
+* Retrieve margin adhoc for equity category.
+*/
+function getMarginAdhocEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 16));
+}
+
+/*
+* Retrieve margin adhoc for commodity category.
+*/
+function getMarginAdhocCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 16));
+}
+
+/*
+* Retrieve margin adhoc for entire account.
+*/
+function getMarginAdhocAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 16));
+}
+
+/*
+* Retrieve margin realised mtm for equity category.
+*/
+function getMarginRealisedMtmEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 17));
+}
+
+/*
+* Retrieve margin realised mtm for commodity category.
+*/
+function getMarginRealisedMtmCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 17));
+}
+
+/*
+* Retrieve margin realised mtm for entire account.
+*/
+function getMarginRealisedMtmAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 17));
+}
+
+/*
+* Retrieve margin unrealised mtm for equity category.
+*/
+function getMarginUnrealisedMtmEquity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_EQUITY, 18));
+}
+
+/*
+* Retrieve margin unrealised mtm for commodity category.
+*/
+function getMarginUnrealisedMtmCommodity(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_COMMODITY, 18));
+}
+
+/*
+* Retrieve margin unrealised mtm for entire account.
+*/
+function getMarginUnrealisedMtmAll(pseudoAccount) {
+	return StrToNum(readMarginColumn(pseudoAccount, AT_MARGIN_ALL, 18));
 }
 
 /*****************************************************************************/
