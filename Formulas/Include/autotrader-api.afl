@@ -1554,6 +1554,100 @@ function getMarginUnrealisedMtmAll(pseudoAccount) {
 
 
 /*****************************************************************************/
+/************************ HOLDING DETAIL FUNCTIONS - START ***********************/
+/*****************************************************************************/
+
+/*
+* Reads holding file and returns a column value for the given symbol.
+*/
+function readHoldingColumn(pseudoAccount, symbol, columnIndex) {
+	filePath = getPortfolioHoldingsFile(pseudoAccount);
+	return fileReadCsvColumnByRowId( filePath, symbol, 5, columnIndex );
+}
+
+/*
+* Retrieve holding exchange.
+*/
+function getHoldingExchange(pseudoAccount, symbol) {
+	return readHoldingColumn(pseudoAccount, symbol, 4);
+}
+
+/*
+* Retrieve holding ISIN.
+*/
+function getHoldingIsin(pseudoAccount, symbol) {
+	return readHoldingColumn(pseudoAccount, symbol, 6);
+}
+
+/*
+* Retrieve holding quantity.
+*/
+function getHoldingQuantity(pseudoAccount, symbol) {
+	return StrToNum(readHoldingColumn(pseudoAccount, symbol, 7));
+}
+
+/*
+* Retrieve holding T1 quantity.
+*/
+function getHoldingT1Quantity(pseudoAccount, symbol) {
+	return StrToNum(readHoldingColumn(pseudoAccount, symbol, 8));
+}
+
+/*
+* Retrieve holding PNL.
+*/
+function getHoldingPnl(pseudoAccount, symbol) {
+	return StrToNum(readHoldingColumn(pseudoAccount, symbol, 9));
+}
+
+/*
+* Retrieve holding product.
+*/
+function getHoldingProduct(pseudoAccount, symbol) {
+	return readHoldingColumn(pseudoAccount, symbol, 10);
+}
+
+/*
+* Retrieve holding collateral type.
+*/
+function getHoldingCollateralType(pseudoAccount, symbol) {
+	return readHoldingColumn(pseudoAccount, symbol, 11);
+}
+
+/*
+* Retrieve holding collateral quantity.
+*/
+function getHoldingCollateralQuantity(pseudoAccount, symbol) {
+	return StrToNum(readHoldingColumn(pseudoAccount, symbol, 12));
+}
+
+/*
+* Retrieve holding haircut.
+*/
+function getHoldingHaircut(pseudoAccount, symbol) {
+	return StrToNum(readHoldingColumn(pseudoAccount, symbol, 13));
+}
+
+/*
+* Retrieve holding average price.
+*/
+function getHoldingAvgPrice(pseudoAccount, symbol) {
+	return StrToNum(readHoldingColumn(pseudoAccount, symbol, 14));
+}
+
+/*
+* Retrieve holding instrument token.
+*/
+function getHoldingInstToken(pseudoAccount, symbol) {
+	return readHoldingColumn(pseudoAccount, symbol, 15);
+}
+
+/*****************************************************************************/
+/************************ HOLDING DETAIL FUNCTIONS - END ***********************/
+/*****************************************************************************/
+
+
+/*****************************************************************************/
 /********************* PORTFOLIO SUMMARY FUNCTIONS - START ********************/
 /*****************************************************************************/
 
