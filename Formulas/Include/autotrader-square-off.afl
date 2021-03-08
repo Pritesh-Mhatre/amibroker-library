@@ -16,6 +16,11 @@ function isSquareOffRequestSent() {
 	return soffStatus > 0;
 }
 
+function isSquareOffRequestSentForAcc(account) {
+	soffStatus = readStaticVariable(account, AT_SQUARE_OFF_STATUS_KEY);
+	return soffStatus > 0;
+}
+
 function shouldSquareOff() {
 	return ((AT_SQUARE_OFF_FLAG == 1) AND (Now(4) > AT_SQUARE_OFF_TIME));
 }
