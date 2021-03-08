@@ -117,3 +117,13 @@ function strEndsWith(text, suffix) {
 	
 	return strEquals(ending, suffix);
 }
+
+/**
+* Amibroker function to find whether a string is empty or not.
+* It a string contains only whitespaces, then it is considered as an empty string.
+*
+* Documentation: https://github.com/Pritesh-Mhatre/amibroker-library/wiki/Text-Functions#strIsEmpty
+*/
+function strIsEmpty(text) {
+	return (StrTrim(text, "") == "");
+}
