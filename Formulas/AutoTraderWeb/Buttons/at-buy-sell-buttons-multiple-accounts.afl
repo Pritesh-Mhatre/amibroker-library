@@ -18,6 +18,9 @@ global ColNumber;
 
 _SECTION_BEGIN("AutoTrader Buttons");
 
+// Account names parameter
+AT_ACCOUNTS = ParamStr("Accounts (comma separated)", "ACC1,ACC2,ACC3");
+
 CellHeight = Param("Cell Height",20,5,200,1); 
 CellWidth = Param("Cell Width",120,5,200,1); 
 PanelYoffset = Param("Cell Row Offset (px)",10,0,Status("pxheight"),1); 
@@ -38,29 +41,29 @@ ClickCoordinates = Nz(StaticVarGet("ClickCoordinates"));
 switch( ClickCoordinates )
 {
     case 101:
-		_TRACE("Placing a BUY market order");
-		
-		// You can write any of AutoTrader Web API functions here		
-		
-		placeOrder("XX1234", AT_EXCHANGE, AT_SYMBOL, 
-			"BUY", "MARKET", AT_PRODUCT_TYPE, AT_QUANTITY, 
-			0, defaultTriggerPrice(), False);
-
-		placeOrder("XX5678", AT_EXCHANGE, AT_SYMBOL, 
-			"BUY", "MARKET", AT_PRODUCT_TYPE, AT_QUANTITY, 
-			0, defaultTriggerPrice(), False);			
+		// Place buy orders when user clicks on BUY button
+		for(iter = 0; !strIsEmpty(acc = StrExtract(AT_ACCOUNTS, iter)); iter++ ) {
+			message = "Placing BUY order for account [" + (iter + 1) + "] : " + acc;
+			logDebug(message);
+			_TRACE(message);
+			
+			// You can write any of AutoTrader Web API functions here		
+			placeOrder(acc, AT_EXCHANGE, AT_SYMBOL, "BUY", "MARKET", 
+				AT_PRODUCT_TYPE, AT_QUANTITY, 0, defaultTriggerPrice(), True);
+		}		
     break;
+	
     case 201:
-		_TRACE("Placing a SELL market order");
-		
-		// You can write any of AutoTrader Web API functions here
-		
-		placeOrder("XX1234", AT_EXCHANGE, AT_SYMBOL, 
-			"SELL", "MARKET", AT_PRODUCT_TYPE, AT_QUANTITY, 
-			0, defaultTriggerPrice(), False);
-
-		placeOrder("XX5678", AT_EXCHANGE, AT_SYMBOL, 
-			"SELL", "MARKET", AT_PRODUCT_TYPE, AT_QUANTITY, 
-			0, defaultTriggerPrice(), False);			
+		// Place sell orders when user clicks on SELL button
+		for(iter = 0; !strIsEmpty(acc = StrExtract(AT_ACCOUNTS, iter)); iter++ ) {
+			message = "Placing SELL order for account [" + (iter + 1) + "] : " + acc;
+			logDebug(message);
+			_TRACE(message);
+			
+			// You can write any of AutoTrader Web API functions here		
+			placeOrder(acc, AT_EXCHANGE, AT_SYMBOL, "SELL", "MARKET", 
+				AT_PRODUCT_TYPE, AT_QUANTITY, 0, defaultTriggerPrice(), True);
+		}		
     break;
+	
 }
