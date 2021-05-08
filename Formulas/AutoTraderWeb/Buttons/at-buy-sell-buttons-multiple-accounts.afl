@@ -16,7 +16,7 @@
 
 global ColNumber;
 
-_SECTION_BEGIN("AutoTrader Buttons");
+_SECTION_BEGIN("AutoTrader Buttons - Multiple Accounts");
 
 // Account names parameter
 AT_ACCOUNTS = ParamStr("Accounts (comma separated)", "ACC1,ACC2,ACC3");
