@@ -19,10 +19,10 @@ _SECTION_BEGIN("AutoTrader Buttons");
 
 STOPLOSS = Param("Stoploss % (percentage)", 1, 1, 100, 1);
 
-CellHeight = Param("Cell Height",20,5,200,1); 
+CellHeight = Param("Cell Height",25,5,200,1); 
 CellWidth = Param("Cell Width",120,5,200,1); 
-PanelYoffset = Param("Cell Row Offset (px)",10,0,Status("pxheight"),1); 
-PanelXoffset = Param("Cell Column Offset (px)",10,0,Status("pxwidth"),1); 
+PanelYoffset = Param("Cell Row Offset (px)",30,0,Status("pxheight"),1); 
+PanelXoffset = Param("Cell Column Offset (px)",20,0,Status("pxwidth"),1); 
 FontRatio = Param("Font: CellHeight ratio",2,1,20,0.1);
 
 _SECTION_END();
