@@ -10,9 +10,10 @@
 *
 * You need to set appropriate values in chart parameters.
 * 
+* Button Article: https://stocksdeveloper.in/amibroker-multi-account-button-trading/
 * User Guide: https://stocksdeveloper.in/documentation/index/
 * API Docs: https://stocksdeveloper.in/documentation/api/
-* Symbol Search: https://stocksdeveloper.in:9013/instrument
+* Symbol Search: https://web.stocksdeveloper.in/instrument
 * 
 * Author - Stocks Developer
 */
@@ -21,18 +22,8 @@
 #include <autotrader.afl>
 #include <autotrader-symbol-mapping.afl>
 
-global ColNumber;
 
-_SECTION_BEGIN("AutoTrader Buttons - Symbol Mapping File");
-
-CellHeight = Param("Cell Height",25,5,200,1); 
-CellWidth = Param("Cell Width",120,5,200,1); 
-PanelYoffset = Param("Cell Row Offset (px)",30,0,Status("pxheight"),1); 
-PanelXoffset = Param("Cell Column Offset (px)",20,0,Status("pxwidth"),1); 
-FontRatio = Param("Font: CellHeight ratio",2,1,20,0.1);
-
-_SECTION_END();
-
+// Following code adds buttons to the screen
 Column_Begin( "1" );
 	BuyCommand = TriggerCell( "BUY", colorBrightGreen, colorAqua, colorBlack);
 Column_End( );
@@ -41,23 +32,54 @@ Column_Begin( "2" );
 	SellCommand = TriggerCell( "SELL", colorRed, colorLightOrange, colorBlack);
 Column_End( );
 
+Column_Begin( "3" );
+	SellCommand = TriggerCell( "Square Off", colorYellow, colorGold, colorBlack);
+Column_End( );
+
+// Get co-ordinates
 ClickCoordinates = Nz(StaticVarGet("ClickCoordinates"));
+
+// Take action based on the button placed by user
 switch( ClickCoordinates )
 {
     case 101:
-		_TRACE("Placing a BUY market order");
-		
-		// You can write any of AutoTrader Web API functions here		
-		placeOrder(AT_ACCOUNT, AT_EXCHANGE, getSymbol(Name()), 
-			"BUY", "MARKET", AT_PRODUCT_TYPE, AT_QUANTITY, 
-			0, defaultTriggerPrice(), False);
+		// Place buy orders when user clicks on BUY button
+		for(iter = 0; !strIsEmpty(acc = StrExtract(AT_ACCOUNTS, iter)); iter++ ) {
+			message = "Placing BUY order for account [" + (iter + 1) + "] : " + acc;
+			logDebug(message);
+			_TRACE(message);
+			
+			// You can write any of AutoTrader Web API functions here		
+			placeOrder(acc, AT_EXCHANGE, getSymbol(Name()), "BUY", "MARKET", 
+				AT_PRODUCT_TYPE, AT_QUANTITY, 0, defaultTriggerPrice(), True);
+		}		
     break;
+	
     case 201:
-		_TRACE("Placing a SELL market order");
-		
-		// You can write any of AutoTrader Web API functions here
-		placeOrder(AT_ACCOUNT, AT_EXCHANGE, getSymbol(Name()), 
-			"SELL", "MARKET", AT_PRODUCT_TYPE, AT_QUANTITY, 
-			0, defaultTriggerPrice(), False);
-    break;
+		// Place sell orders when user clicks on SELL button
+		for(iter = 0; !strIsEmpty(acc = StrExtract(AT_ACCOUNTS, iter)); iter++ ) {
+			message = "Placing SELL order for account [" + (iter + 1) + "] : " + acc;
+			logDebug(message);
+			_TRACE(message);
+			
+			// You can write any of AutoTrader Web API functions here		
+			placeOrder(acc, AT_EXCHANGE, getSymbol(Name()), "SELL", "MARKET", 
+				AT_PRODUCT_TYPE, AT_QUANTITY, 0, defaultTriggerPrice(), False);
+		}		
+		break;
+	
+    case 301:
+		// Place a square off request when user clicks on Square Off button
+		for(iter = 0; !strIsEmpty(acc = StrExtract(AT_ACCOUNTS, iter)); iter++ ) {
+			message = "Sending square-off position request sent for account [" + (iter + 1) + "] : " + acc 
+				+ ", Position : " + getSymbol(Name());
+			logDebug(message);
+			_TRACE(message);
+			
+			// You can write any of AutoTrader Web API functions here
+			positionType = calcPositionType(AT_VARIETY_REGULAR, AT_PRODUCT_TYPE);
+			squareOffPosition(acc, "NET", positionType, AT_EXCHANGE, getSymbol(Name()));
+		}		
+		break;
+
 }

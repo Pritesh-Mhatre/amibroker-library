@@ -25,3 +25,46 @@ function calcDoubleQuantity(account, symbol, defaultQuantity) {
 	}
 	return qty;
 }
+
+/*
+* Calculates position type.
+*/
+function calcPositionType(variety, productType) {
+	positionType = "";
+	
+	switch(variety) {
+		case AT_VARIETY_REGULAR:
+			switch(productType) {
+				case AT_PRODUCT_INTRADAY:
+					positionType = AT_POSITION_MIS;
+					break;
+				
+				case AT_PRODUCT_DELIVERY:
+					positionType = AT_POSITION_CNC;
+					break;
+					
+				case AT_PRODUCT_NORMAL:
+					positionType = AT_POSITION_NRML;
+					break;
+					
+				default:
+					_TRACE("ERROR: Invalid Product Type passed, cannot calculate position type. Product type [" + productType + "]");
+					break;
+			}
+			break;
+		
+		case AT_VARIETY_CO:
+			positionType = AT_POSITION_CO;
+			break;
+		
+		case AT_VARIETY_BO:
+			positionType = AT_POSITION_BO;
+			break;
+			
+		default:
+			_TRACE("ERROR: Invalid variety passed, cannot calculate position type. Variety [" + variety + "]");
+			break;
+	}
+	
+	return positionType;
+}
