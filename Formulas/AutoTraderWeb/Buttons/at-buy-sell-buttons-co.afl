@@ -69,7 +69,7 @@ switch( ClickCoordinates )
 			_TRACE(message);
 			
 			// You can write any of AutoTrader Web API functions here
-			placeCoverOrder(AT_ACCOUNT, AT_EXCHANGE, 
+			placeCoverOrder(acc, AT_EXCHANGE, 
 				AT_SYMBOL, "SELL", "MARKET", AT_QUANTITY, 
 				0, stoplossTriggerPrice, False);
 		}		
