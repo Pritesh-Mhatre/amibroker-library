@@ -84,7 +84,7 @@ switch( ClickCoordinates )
 			_TRACE(message);
 			
 			// You can write any of AutoTrader Web API functions here
-			positionType = calcPositionType(AT_VARIETY_REGULAR, AT_PRODUCT_TYPE);
+			positionType = calcPositionType(AT_VARIETY_CO, AT_PRODUCT_TYPE);
 			squareOffPosition(acc, "NET", positionType, AT_EXCHANGE, AT_SYMBOL);
 		}		
 		break;
