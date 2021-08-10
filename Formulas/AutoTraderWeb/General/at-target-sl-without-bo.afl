@@ -256,7 +256,7 @@ else {
 					_TRACE(message);
 
 					orderId = placeOrder(AT_ACCOUNT, AT_EXCHANGE, AT_SYMBOL, exitTradeType, "SL_MARKET", 
-						"INTRADAY", AT_QUANTITY, 0, triggerPrice, Flase);
+						"INTRADAY", AT_QUANTITY, 0, triggerPrice, False);
 					
 					saveStaticVariableText(AT_ACCOUNT, STOPLOSS_ORDER_KEY, orderId);
 				} else {
