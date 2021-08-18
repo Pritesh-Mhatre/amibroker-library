@@ -1237,6 +1237,24 @@ function getPositionStockBroker(pseudoAccount, category, type,
 		category, type, independentExchange,	independentSymbol, 28);
 }
 
+/*
+* Retrieve positions's state (OPEN, CLOSED).
+*/
+function getPositionState(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 29);
+}
+
+/*
+* Retrieve positions's direction (LONG, SHORT, NEUTRAL).
+*/
+function getPositionDirection(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 30);
+}
+
 /*****************************************************************************/
 /************************ POSITION DETAIL FUNCTIONS - END ***********************/
 /*****************************************************************************/
