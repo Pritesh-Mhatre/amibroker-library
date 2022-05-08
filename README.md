@@ -1,4 +1,4 @@
-# AmiBroker library for single or multi-account automated trading on Zerodha, Upstox, AliceBlue, Finvasia, Angel Broking, Fyers
+# AmiBroker library for single or multi-account automated trading on Zerodha, Upstox, AliceBlue, Finvasia, Angel Broking, Fyers, IIFL, 5Paisa, Profitmart, Mastertrust
 
 ## Introduction
 **[AutoTrader Web](https://stocksdeveloper.in/autotrader-web/)** is our next generation automated trading & PMS software suite. **Most preferred tool by portfolio & fund managers, algorithmic traders as well as sub-brokers.**
