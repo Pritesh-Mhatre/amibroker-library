@@ -1049,7 +1049,7 @@ function getPositionTradingAccount(pseudoAccount, category, type,
 }
 
 /*
-* Retrieve positions's MTM.
+* Retrieve positions's MTM (Mtm calculated by your stock broker).
 */
 function getPositionMtm(pseudoAccount, category, type, 
 	independentExchange, independentSymbol) {
@@ -1058,12 +1058,21 @@ function getPositionMtm(pseudoAccount, category, type,
 }
 
 /*
-* Retrieve positions's PNL.
+* Retrieve positions's PNL (Pnl calculated by your stock broker).
 */
 function getPositionPnl(pseudoAccount, category, type, 
 	independentExchange, independentSymbol) {
 	return StrToNum(readPositionColumn(pseudoAccount, 
 		category, type, independentExchange,	independentSymbol, 8));
+}
+
+/*
+* Retrieve positions's AT PNL (Pnl calculated by AutoTrader Web).
+*/
+function getPositionAtPnl(pseudoAccount, category, type, 
+	independentExchange, independentSymbol) {
+	return StrToNum(readPositionColumn(pseudoAccount, 
+		category, type, independentExchange,	independentSymbol, 31));
 }
 
 /*
@@ -1658,6 +1667,20 @@ function getHoldingAvgPrice(pseudoAccount, symbol) {
 */
 function getHoldingInstToken(pseudoAccount, symbol) {
 	return readHoldingColumn(pseudoAccount, symbol, 15);
+}
+
+/*
+* Retrieve holding symbol LTP.
+*/
+function getHoldingLtp(pseudoAccount, symbol) {
+	return readHoldingColumn(pseudoAccount, symbol, 21);
+}
+
+/*
+* Retrieve holding current value.
+*/
+function getHoldingCurrentValue(pseudoAccount, symbol) {
+	return readHoldingColumn(pseudoAccount, symbol, 22);
 }
 
 /*****************************************************************************/
