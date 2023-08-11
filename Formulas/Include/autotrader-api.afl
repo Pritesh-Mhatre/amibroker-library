@@ -14,6 +14,7 @@ AT_LAST_ORDER_TRADE_TYPE_KEY = "AT_LAST_ORDER_TRADE_TYPE";
 AT_START_TIME_CHUNK = "globalStartTimeChunk";
 AT_ORDER_SEQUENCE = "globalOrderSequence";
 AT_INIT = "globalInit";
+AT_GLOBAL_ORDER_NO_SEMAPHORE = "globalOrderNoSemaphore";
 
 /****************************** CONSTANTS - END ******************************/
 
@@ -80,12 +81,29 @@ if( Nz( StaticVarGet(AT_INIT) ) == 0 )
 	StaticVarSetText( AT_START_TIME_CHUNK, startTime);
 }
 
+
+function nextGlobalOrderNumberInternal() {
+	num = StaticVarGet( AT_ORDER_SEQUENCE );
+	StaticVarSet( AT_ORDER_SEQUENCE, num + 1);
+	return num;
+}
+
 /*
 * Givens next global order number.
 */
 function nextGlobalOrderNumber() {
-	num = StaticVarGet( AT_ORDER_SEQUENCE );
-	StaticVarSet( AT_ORDER_SEQUENCE, num + 1);
+	num = int((Random() * 100000) % 100000);
+	if(tryEnterCriticalSection(AT_GLOBAL_ORDER_NO_SEMAPHORE))
+	{
+		// you are inside critical section now
+		num = nextGlobalOrderNumberInternal();
+		// Do not forget to leave critical section
+		leaveCriticalSection();
+	}
+	else
+	{
+		num = nextGlobalOrderNumberInternal();
+	}
 	return num;
 }
 

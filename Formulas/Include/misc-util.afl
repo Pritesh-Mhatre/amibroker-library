@@ -84,3 +84,31 @@ function reverseTradeType(tradeType) {
 	
 	return result;
 }
+
+function tryEnterCriticalSection(secname)
+{
+  global _cursec;
+   _cursec= "";
+
+  // try obtaining semaphore for 1000 ms
+  for( i = 0; i < 1000; i++ )
+   if( StaticVarCompareExchange( secname, 1, 0 ) == 0 )
+   {
+       _cursec = secname;
+      break;
+   }
+   else ThreadSleep( 1 ); //sleep one millisecond
+
+  return _cursec != "";
+}
+
+// call it ONLY when tryEnterCriticalSection returned TRUE !
+function leaveCriticalSection()
+{    
+   global _cursec;
+   if( _cursec != "" )
+     {
+      StaticVarSet( _cursec, 0 );
+       _cursec = "";
+     }
+}
